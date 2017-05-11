@@ -1,0 +1,14 @@
+fixtures:
+  forge_modules:
+    stdlib:
+      repo: "puppetlabs/stdlib"
+      ref: "4.6.0"
+    inifile:
+      repo: "puppetlabs/inifile"
+    concat:
+      repo: "puppetlabs/concat"
+      ref: "1.2.5"
+  repositories:
+    stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
+  symlinks:
+    nifi: "#{source_dir}"

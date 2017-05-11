@@ -56,6 +56,8 @@ describe 'nifi' do
           it { is_expected.to contain_concat__fragment('frag_cluster_state_provider')}
 
           it { is_expected.to contain_nifi__local_state_provider('local_state_provider') }
+
+          it { is_expected.to contain_nifi__file_authorizer('nifi_file_authorizer') }
         end
       end
 

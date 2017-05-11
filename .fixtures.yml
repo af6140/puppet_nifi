@@ -8,6 +8,9 @@ fixtures:
     concat:
       repo: "puppetlabs/concat"
       ref: "1.2.5"
+    java_ks:
+      repo: "puppetlabs/java_ks"
+      ref: "1.4.1"
   repositories:
     stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
   symlinks:

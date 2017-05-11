@@ -85,6 +85,49 @@ describe 'nifi' do
         end
       end
 
+      on_supported_os.each do |os, facts|
+        context "on #{os} without cluster config, with ssl config" do
+          let(:facts) do
+            facts[:concat_basedir] = '/tmp'
+            facts[:fqdn] = 'nifi-as01a.dev'
+            facts
+          end
+
+          let(:params) {
+            {
+              :config_cluster =>false,
+              :config_ssl => true,
+              :cacert => 'cacert',
+              :node_cert =>'node_cert',
+              :node_private_key => 'node_key',
+              :initial_admin_cert =>'admin_cert',
+              :initial_admin_key => 'admin_key',
+              :keystore_password => 'changeit',
+              :key_password => 'secret',
+              :client_auth => true,
+            }
+          }
+          it { is_expected.to compile.with_all_deps }
+
+          it { is_expected.to contain_service('nifi') }
+
+          #it { is_expected.to contain_nifi__ldap_provider('ldap_provider')}
+
+          #testing security setup
+          it { is_expected.to contain_nifi__security('nifi_properties_security_setting')}
+          it { is_expected.to contain_file('/opt/nifi/conf/certs/ca.pem').with_content(/cacert/) }
+          it { is_expected.to contain_ini_setting('nifi_setting_nifi_security_keystorePasswd').with_setting('nifi.security.keystorePasswd')
+            .with_value('changeit')
+          }
+          it { is_expected.to contain_ini_setting('nifi_setting_nifi_security_keyPasswd').with_setting('nifi.security.keyPasswd')
+                                .with_value('secret')
+          }
+          it { is_expected.to contain_java_ks('nifi_keystore:nifi-as01a.dev') }
+          it { is_expected.to contain_java_ks('nifi_truststore:ca') }
+
+        end
+      end
+
 
       context "on #{os} with cluster config" do
         let(:facts) do

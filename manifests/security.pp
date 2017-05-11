@@ -66,7 +66,7 @@ define nifi::security(
     content => $initial_admin_cert,
     require => File["${::nifi::nifi_conf_dir}/certs"]
   }
-  file { "/opt/nifi/conf/keyss/${::fqdn}_initial_admin.key":
+  file { "/opt/nifi/conf/keys/${::fqdn}_initial_admin.key":
     ensure => 'present',
     owner => 'nifi',
     group => 'nifi',

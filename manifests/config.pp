@@ -176,7 +176,7 @@ class nifi::config(
         'initial_admin_identity' => $::nifi::initial_admin_dn
       }
     }
-    nifi::security { 'nifi_properties_security_setting:':
+    nifi::security { 'nifi_properties_security_setting':
       cacert             => $::nifi::cacert,
       node_cert          => $::nifi::node_cert,
       node_private_key   => $::nifi::node_private_key,

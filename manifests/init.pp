@@ -40,6 +40,7 @@ class nifi (
   assert_type(String[1], $package_version)
 
   assert_type(Boolean, $config_cluster)
+  assert_type(Boolean, $config_ssl)
 
   if $cluster_members {
     assert_type(Array, $cluster_members)

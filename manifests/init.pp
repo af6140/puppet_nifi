@@ -32,6 +32,8 @@ class nifi (
   $keystore_password = 'changeit',
   $key_password = undef,
   $client_auth = false,
+  $custom_properties_file = $::nifi::params::custom_properties_file,
+  $custom_properties = undef,
 ) inherits ::nifi::params {
 
   # validate parameters here

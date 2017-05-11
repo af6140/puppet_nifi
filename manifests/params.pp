@@ -10,6 +10,7 @@ class nifi::params {
       $service_name = 'nifi'
       $package_version = '1.2.0-0.noarch'
       $nifi_conf_dir = '/opt/nifi/conf'
+      $custom_properties_file = '/opt/nifi/flow/custom.properties'
     }
     default: {
       fail("${::operatingsystem} not supported")

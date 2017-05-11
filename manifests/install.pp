@@ -16,6 +16,12 @@ class nifi::install {
   package { $::nifi::package_name:
     ensure => $::nifi::package_version
   } ->
+  file {'/opt/nifi':
+    ensre => 'directory',
+    owner => 'nifi',
+    group => 'nifi',
+    mode => '0755',
+  } ->
   file { 'custom_properties_exist':
     path => '/opt/nifi/flow/custom.properties',
     ensure => 'present',

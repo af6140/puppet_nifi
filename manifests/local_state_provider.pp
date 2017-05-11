@@ -40,7 +40,7 @@ define nifi::local_state_provider (
 
   concat::fragment { "frag_local_state_provider":
     order   => '02',
-    target  => '/opt/nifi/conf/state-management.xml',
+    target  => "${::nifi::nifi_conf_dir}/state-management.xml",
     content => template('nifi/statemgmt/frag_local_provider.erb')
   }
 }

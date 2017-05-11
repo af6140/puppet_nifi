@@ -54,7 +54,16 @@ define nifi::ldap_provider (
 
   concat::fragment { "frag_${identifier}":
     order   => '02',
-    target  => '/opt/nifi/conf/login-identity-providers.xml',
+    target  => "${::nifi::nifi_conf_dir}/login-identity-providers.xml",
     content => template('nifi/idmapping/frag_ldap_provider.erb')
+  }
+
+  ini_setting { "nifi_settings_login_identity_provider":
+    ensure => present,
+    path   => "${::nifi::nifi_conf_dir}/nifi.properties",
+    section_prefix => '',
+    section_suffix => '',
+    setting => 'nifi.security.user.login.identity.provider',
+    value => $identifier,
   }
 }

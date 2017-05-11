@@ -9,7 +9,7 @@ define nifi::embedded_zookeeper (
      $real_index=$index+1
      ini_setting {"zookeeper_member_${real_index}":
        ensure => present,
-       path   => '/opt/nifi/conf/zookeeper.properties',
+       path   => "${::nifi::nifi_conf_dir}/zookeeper.properties",
        section_prefix => '',
        section_suffix => '',
        setting => "zookeeper.${real_index}",
@@ -18,19 +18,19 @@ define nifi::embedded_zookeeper (
      #set zookeeper myid
      # echo $id > .state/zookeeper/myid
      if $::fqdn == $member {
-     file {'/opt/nifi/conf/state/':
+     file {"${::nifi::nifi_conf_dir}/state/":
        ensure => 'directory',
        owner => 'nifi',
        group => 'nifi',
        mode => '0755'
      } ->
-     file {'/opt/nifi/conf/state/zookeeper':
+     file {"${::nifi::nifi_conf_dir}/state/zookeeper":
        ensure => 'directory',
        owner => 'nifi',
        group => 'nifi',
        mode => '0755'
      } ->
-     file {'/opt/nifi/conf/state/zookeeper/myid':
+     file {"${::nifi::nifi_conf_dir}/state/zookeeper/myid":
          ensure => 'present',
          content => "$real_index",
          owner => 'nifi',
@@ -42,7 +42,7 @@ define nifi::embedded_zookeeper (
  }else {
    ini_setting {"zookeeper_member_1":
      ensure => present,
-     path   => '/opt/nifi/conf/zookeeper.properties',
+     path   => "${::nifi::nifi_conf_dir}zookeeper.properties",
      section_prefix => '',
      section_suffix => '',
      setting => "zookeeper.1",

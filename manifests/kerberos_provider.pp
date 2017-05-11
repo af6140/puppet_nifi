@@ -37,7 +37,7 @@ define nifi::kerberos_provider (
 
   concat::fragment { "frag_${identifier}":
     order   => '03',
-    target  => '/opt/nifi/conf/login-identity-providers.xml',
+    target  => "${::nifi::nifi_conf_dir}/login-identity-providers.xml",
     content => template('nifi/idmapping/frag_kerberos_provider.erb')
   }
 }

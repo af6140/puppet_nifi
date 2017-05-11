@@ -8,6 +8,9 @@ describe 'nifi::ldap_provider' do
         facts[:concat_basedir] = '/tmp'
         facts
       end
+      let(:pre_condition) {
+        "include nifi"
+      }
       context "with parameters" do
         let(:params) {
           {

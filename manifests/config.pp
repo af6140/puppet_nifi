@@ -2,9 +2,8 @@
 #
 # This class is called from nifi for service config.
 #
-class nifi::config {
-  $nifi_properties_file = '/opt/nifi/conf/nifi.properties'
-  $nifi_bootstrap_file = '/opt/nifi/conf/bootstramp.conf'
+class nifi::config(
+) {
 
   #calculate nifi version from package version
   $pkg_version_specs = split($nifi::package_version, "-")
@@ -13,7 +12,6 @@ class nifi::config {
   notify {"version :${nifi_cal_version}":}
 
   assert_type(Pattern[/(\d)+\.(\d)+\.(\d)+/] ,$nifi_cal_version)
-
 
 
   # login provider configuration
@@ -50,7 +48,7 @@ class nifi::config {
 
   ini_setting { "nifi_bootstrap_jvm_minheap":
     ensure => present,
-    path   => $nifi_bootstrap_file,
+    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
     section_prefix => '',
     section_suffix => '',
     setting => 'java.arg.2',
@@ -59,11 +57,24 @@ class nifi::config {
 
   ini_setting { "nifi_bootstrap_jvm_maxheap":
     ensure => present,
-    path   => $nifi_bootstrap_file,
+    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
     section_prefix => '',
     section_suffix => '',
     setting => 'java.arg.3',
     value => $maxHeapArgs,
+  }
+  #manage ldap id mapping
+
+  if ! empty($nifi::ldap_id_mappings) {
+    #use index 0 to override default pattern
+    $nifi::ldap_id_mappings.each |$index, $entry| {
+      nifi::idmapping_dn { "ldap_id_mapping_${index}":
+        pattern => $entry['pattern'],
+        value => $entry['value'],
+        index => $entry['index'],
+        ensure => $entry['ensure']
+      }
+    }
   }
   #manage state-management-xml
   concat {'/opt/nifi/conf/state-management.xml':
@@ -131,11 +142,53 @@ class nifi::config {
     #notify {"Set setting: ${property_value}":}
     ini_setting { "nifi_setting_${$property_name}":
       ensure => present,
-      path   => $nifi_properties_file,
+      path   => "${::nifi::nifi_conf_dir}/nifi.properties",
       section_prefix => '',
       section_suffix => '',
       setting => regsubst($property_name, '_', '.', 'G'),
       value => $property_value,
+    }
+  }
+
+  #manage authorizer
+  concat {'/opt/nifi/conf/authorizers.xml':
+    ensure => 'present',
+    warn => true,
+    owner => 'nifi',
+    group => 'nifi',
+    mode => '0644',
+  }
+  concat::fragment{ 'authorizers_start':
+    order => '01',
+    target => '/opt/nifi/conf/authorizers.xml',
+    content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<authorizers>"
+  }
+
+  concat::fragment{ 'authorizers_end':
+    order => '99',
+    target => '/opt/nifi/conf/authorizers.xml',
+    content => "</authorizers>"
+  }
+
+  if $::nifi::config_ssl {
+    nifi::file_authorizer { 'nifi_file_authorizer':
+      provider_properties => {
+        'initial_admin_identity' => $::nifi::initial_admin_dn
+      }
+    }
+    nifi::security { 'nifi_properties_security_setting:':
+      cacert             => $::nifi::cacert,
+      node_cert          => $::nifi::node_cert,
+      node_private_key   => $::nifi::node_private_key,
+      initial_admin_cert => $::nifi::initial_admin_cert,
+      initial_admin_key  => $::nifi::initial_admin_key,
+      keystore_password  => $::nifi::keystore_password,
+      key_password       => $::nifi::key_password,
+      client_auth        => $::nifi::client_auth,
+    }
+  }else {
+    #default file authorizer
+    nifi::file_authorizer { 'nifi_file_authorizer':
     }
   }
 }

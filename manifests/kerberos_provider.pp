@@ -8,7 +8,7 @@ define nifi::kerberos_provider (
     "default_realm" => "NIFI.APACHE.ORG",
     "authentication_expiration" => "12 hours"
   }
-  $active_kerberos_provider_properties = deep_merge($provider_properties, $default_kerberos_properties)
+  $active_kerberos_provider_properties = deep_merge($default_kerberos_properties, $provider_properties)
   assert_type(Hash[String, String], $active_kerberos_provider_properties)
 
   $tmp = $active_kerberos_provider_properties.map |$key, $value | {

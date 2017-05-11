@@ -11,17 +11,17 @@ describe 'nifi::ldap_provider' do
       let(:pre_condition) {
         "include nifi"
       }
-      context "with parameters" do
+      context "with non-default parameters" do
         let(:params) {
           {
             'provider_properties' => {
-              "authentication_strategy" => "START_TLS"
+              "authentication_strategy" => "START_TLS2"
             }
           }
         }
         it {
           is_expected.to contain_concat__fragment('frag_ldap-provider').with_content(
-            /<property name="Authentication Strategy">START_TLS<\/property>/
+            /<property name="Authentication Strategy">START_TLS2<\/property>/
           )
         }
       end

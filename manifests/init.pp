@@ -23,7 +23,7 @@ class nifi (
   $ldap_provider_configs = {},
   $ldap_id_mappings = undef,
   $config_ssl=false,
-  $initial_admin_dn = undef,
+  $initial_admin_identity = undef,
   $cacert = undef,
   $node_cert = undef,
   $node_private_key = undef,

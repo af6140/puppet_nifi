@@ -100,6 +100,7 @@ describe 'nifi' do
               :cacert => 'cacert',
               :node_cert =>'node_cert',
               :node_private_key => 'node_key',
+              :initial_admin_identity => 'cn=admin',
               :initial_admin_cert =>'admin_cert',
               :initial_admin_key => 'admin_key',
               :keystore_password => 'changeit',
@@ -124,6 +125,11 @@ describe 'nifi' do
           }
           it { is_expected.to contain_java_ks('nifi_keystore:nifi-as01a.dev') }
           it { is_expected.to contain_java_ks('nifi_truststore:ca') }
+
+          #test authorizer settings
+          it { is_expected.to contain_concat__fragment('frag_authorizer_file-provider')
+                .with_content(/<property name="Initial Admin Identity">cn=admin<\/property>/)
+          }
 
         end
       end

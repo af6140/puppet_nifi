@@ -25,7 +25,7 @@ define nifi::ldap_provider (
     "identity_strategy" => "USE_DN",
     "authentication_expiration" => "12 hours"
   }
-  $active_ldap_provider_properties = deep_merge($provider_properties, $default_ldap_properties)
+  $active_ldap_provider_properties = deep_merge($default_ldap_properties, $provider_properties)
   assert_type(Hash[String, String], $active_ldap_provider_properties)
 
   $tmp = $active_ldap_provider_properties.map |$key, $value | {

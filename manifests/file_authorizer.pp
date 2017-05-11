@@ -10,7 +10,7 @@ define nifi::file_authorizer (
     "initial_admin_identity" => "",
     "legacy_authorized_users_file" => ""
   }
-  $active_provider_properties = deep_merge($provider_properties, $default_properties)
+  $active_provider_properties = deep_merge($default_properties, $provider_properties,)
   assert_type(Hash[String, String], $active_provider_properties)
 
   $tmp = $active_provider_properties.map |$key, $value | {

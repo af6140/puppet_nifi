@@ -13,7 +13,7 @@ define nifi::cluster_state_provider (
     'access_control' => 'Open'
   }
 
-  $active_provider_properties = deep_merge($provider_properties, $default_provider_properties)
+  $active_provider_properties = deep_merge($default_provider_properties,$provider_properties)
   assert_type(Hash[String, String], $active_provider_properties)
 
   $tmp = $active_provider_properties.map |$key, $value | {

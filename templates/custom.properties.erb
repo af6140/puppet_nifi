@@ -1,0 +1,4 @@
+#Managed by puppet do NOT modify manually
+<% @nifi_custom_properties.map do |key, value| -%>
+<%= key %>">=<%= value %>
+<% end -%>

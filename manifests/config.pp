@@ -192,4 +192,9 @@ class nifi::config(
     nifi::file_authorizer { 'nifi_file_authorizer':
     }
   }
+
+
+  nifi::custom_properties{'nifi_custom_properties':
+
+  }
 }

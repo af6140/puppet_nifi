@@ -21,12 +21,5 @@ class nifi::install {
     owner => 'nifi',
     group => 'nifi',
     mode => '0755',
-  } ->
-  file { 'custom_properties_exist':
-    path => '/opt/nifi/flow/custom.properties',
-    ensure => 'present',
-    mode => '0644',
-    owner => 'nifi',
-    group => 'nifi',
   }
 }

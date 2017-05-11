@@ -1,0 +1,7 @@
+<provider>
+  <identifier><%= @normalized_kerberos_provider['identifier'] %></identifier>
+  <class><%= @normalized_kerberos_provider['provider_name'] %></class>
+  <% @normalized_kerberos_provider_properties.map do |key, value| -%>
+      <property name="<%= key %>"><%= value %></property>
+  <% end -%>
+</provider>

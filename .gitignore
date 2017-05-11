@@ -1,0 +1,48 @@
+.*.sw?
+.bundle
+*.gem
+*.rbc
+.config
+rdoc
+spec/reports
+test/tmp
+test/version_tmp
+tmp
+pkg
+coverage
+
+# YARD artifacts
+.yardoc
+_yardoc
+doc/
+rdoc/
+
+# Vim
+*.swp
+
+# Intellij
+.idea
+*.iml
+*.ipr
+*.iws
+/out/
+
+# OS X
+.DS_Store
+
+#Puppet
+spec/fixtures/modules/*
+spec/fixtures/manifests/*
+Gemfile.lock
+
+#
+.vagrant
+log
+vendor
+junit
+
+
+# emacs related
+.\#*
+\#*\#
+*~% 

@@ -1,0 +1,15 @@
+vendor/
+pkg/
+.vagrant
+.idea
+*.iml
+spec/
+tests/
+.fixtures.yml
+.ruby-gemset
+.ruby-version
+Gemfile
+Gemfile.lock
+Guardfile
+Rakefile
+log

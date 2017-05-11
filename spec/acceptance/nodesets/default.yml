@@ -1,0 +1,14 @@
+HOSTS:
+  centos-7-x64:
+    roles:
+      - agent
+      - centos
+    platform: el-7-x86_64
+    image: centos:7
+    hypervisor: docker
+    docker_cmd: ['/sbin/init']
+    docker_container_name: puppetagent
+    docker_preserve_image: false
+CONFIG:
+  log_level: verbose
+  type: foss

@@ -127,6 +127,7 @@ class nifi::config(
     #disable cluster start
     $nifi_cluster_configs = {
       'nifi_cluster_is_node' => 'false',
+      'nifi_zookeeper_connect_string' => '',
       'nifi_state_management_embedded_zookeeper_start' => 'false',
     }
 
@@ -173,7 +174,7 @@ class nifi::config(
   if $::nifi::config_ssl {
     nifi::file_authorizer { 'nifi_file_authorizer':
       provider_properties => {
-        'initial_admin_identity' => $::nifi::initial_admin_dn
+        'initial_admin_identity' => $::nifi::initial_admin_identity
       }
     }
     nifi::security { 'nifi_properties_security_setting':

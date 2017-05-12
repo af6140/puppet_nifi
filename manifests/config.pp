@@ -14,6 +14,62 @@ class nifi::config(
   assert_type(Pattern[/(\d)+\.(\d)+\.(\d)+/] ,$nifi_cal_version)
 
 
+
+  ##bootstrap jvm customization
+  #config jvm size
+
+  $minHeapArgs = "-Xms${::nifi::min_heap}"
+  $maxHeapArgs = "-Xmx${::nifi::max_heap}"
+
+  ini_setting { "nifi_bootstrap_jvm_minheap":
+    ensure => present,
+    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
+    section_prefix => '',
+    section_suffix => '',
+    setting => 'java.arg.2',
+    value => $minHeapArgs,
+  }
+
+  ini_setting { "nifi_bootstrap_jvm_maxheap":
+    ensure => present,
+    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
+    section_prefix => '',
+    section_suffix => '',
+    setting => 'java.arg.3',
+    value => $maxHeapArgs,
+  }
+
+  #java 8 codecache issue https://docs.hortonworks.com/HDPDocuments/HDF2/HDF-2.0.0/bk_administration/content/bootstrap_properties.html
+  #java.arg.7=-XX:ReservedCodeCacheSize=256m
+  #java.arg.8=-XX:CodeCacheFlushingMinimumFreeSpace=10m
+  #java.arg.9=-XX:+UseCodeCacheFlushing
+
+  ini_setting { "nifi_bootstrap_jvm_codecache_size":
+    ensure => present,
+    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
+    section_prefix => '',
+    section_suffix => '',
+    setting => 'java.arg.7',
+    value => "-XX:ReservedCodeCacheSize=256m"
+  }
+  ini_setting { "nifi_bootstrap_jvm_codecache_flush_size":
+    ensure => present,
+    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
+    section_prefix => '',
+    section_suffix => '',
+    setting => 'java.arg.8',
+    value => "-XX:CodeCacheFlushingMinimumFreeSpace=10m"
+  }
+  ini_setting { "nifi_bootstrap_jvm_codecache_flush":
+    ensure => present,
+    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
+    section_prefix => '',
+    section_suffix => '',
+    setting => 'java.arg.8',
+    value => "-XX:+UseCodeCacheFlushing"
+  }
+
+
   # login provider configuration
   concat {'/opt/nifi/conf/login-identity-providers.xml':
     ensure => 'present',
@@ -41,28 +97,7 @@ class nifi::config(
     }
   }
 
-  #config jvm size
 
-  $minHeapArgs = "-Xms${::nifi::min_heap}"
-  $maxHeapArgs = "-Xmx${::nifi::max_heap}"
-
-  ini_setting { "nifi_bootstrap_jvm_minheap":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'java.arg.2',
-    value => $minHeapArgs,
-  }
-
-  ini_setting { "nifi_bootstrap_jvm_maxheap":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'java.arg.3',
-    value => $maxHeapArgs,
-  }
   #manage ldap id mapping
 
   if ! empty($nifi::ldap_id_mappings) {

@@ -60,6 +60,10 @@ class nifi (
     if  $count_of_nodes != $count_of_identities {
       fail("Count of nodes does not match count of node identities")
     }
+
+    if ! $config_ssl {
+      fail("when configuring cluster, ssl must be configured, since node use cert for identity")
+    }
   }
 
   class { '::nifi::install': } ->

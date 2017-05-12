@@ -20,6 +20,7 @@ class nifi (
   $max_heap = '512m',
   $config_cluster = false,
   $cluster_members = [],
+  $cluster_identities=[],
   $ldap_provider_configs = {},
   $ldap_id_mappings = undef,
   $config_ssl=false,
@@ -50,6 +51,15 @@ class nifi (
 
   if $ldap_id_mappings {
     assert_type(Array[Hash[String, String], 0, 99], $ldap_id_mappings)
+  }
+
+  if($config_cluster) {
+    $count_of_nodes = size($cluster_members)
+    $count_of_identities = size($cluster_identities)
+
+    if  $count_of_nodes != $count_of_identities {
+      fail("Count of nodes does not match count of node identities")
+    }
   }
 
   class { '::nifi::install': } ->

@@ -123,6 +123,17 @@ class nifi::config(
         'connect_string' => $zookeeper_connect_string
       }
     }
+    #need set cluster memeber node identity in authorizers.xml
+    #this really depends on the id mapping rule
+    # for example, can use
+    $cluster_dns = $nifi::cluster_identities.map |$index, $node_identity| {
+      $real_index = $index+1
+      ["node_identity_${real_index}", $node_identity]
+    }
+
+    #notify {"$cluster_dns":}
+    $cluster_ids_hash = hash(flatten($cluster_dns))
+
   }else {
     #disable cluster start
     $nifi_cluster_configs = {
@@ -134,11 +145,12 @@ class nifi::config(
     #default cluster state provider
     nifi::cluster_state_provider {'cluster_state_provider':
     }
+
+    $cluster_ids_hash = {}
   }
 
 
-  $tmp_active_properties = deep_merge($::nifi::params::nifi_properties, $::nifi::nifi_properties)
-  $active_properties = deep_merge($tmp_active_properties, $nifi_cluster_configs)
+  $active_properties = deep_merge($::nifi::params::nifi_properties, $::nifi::nifi_properties, $nifi_cluster_configs)
   $active_properties.each |String $property_name, $property_value| {
     #notify {"Set setting: ${property_value}":}
     ini_setting { "nifi_setting_${$property_name}":
@@ -172,10 +184,17 @@ class nifi::config(
   }
 
   if $::nifi::config_ssl {
+
+    if ! $::nifi::initial_admin_identity or empty($::nifi::initial_admin_identity) {
+      fail("When setup secure nifi instance, initial admin identity is required")
+    }
+
+    $admin_id_hash = {
+      'initial_admin_identity' => $::nifi::initial_admin_identity
+    }
+    $authorizer_props = deep_merge($admin_id_hash, $cluster_ids_hash)
     nifi::file_authorizer { 'nifi_file_authorizer':
-      provider_properties => {
-        'initial_admin_identity' => $::nifi::initial_admin_identity
-      }
+      provider_properties => $authorizer_props
     }
     nifi::security { 'nifi_properties_security_setting':
       cacert             => $::nifi::cacert,

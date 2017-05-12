@@ -4,6 +4,8 @@ describe 'nifi' do
   let(:hiera_config) { 'spec/fixtures/hiera/hiera.yaml' }
   hiera = Hiera.new(:config => 'spec/fixtures/hiera/hiera.yaml')
 
+  cluster_members = %w(nifi-as01a.dev nifi-as02a.dev nif-as03a.dev)
+  cluster_identities = %w(nifi-as01a.dev nifi-as02a.dev nif-as03a.dev)
   context 'supported operating systems' do
     on_supported_os.each do |os, facts|
       context "on #{os} without cluster config" do
@@ -149,14 +151,14 @@ describe 'nifi' do
         it { is_expected.to contain_java_ks('nifi_truststore:ca') }
 
         #test authorizer settings
-        it { is_expected.to contain_concat__fragment('frag_authorizer_file-provider')
-                              .with_content(/<property name="Initial Admin Identity">cn=admin<\/property>/)
-        }
+        # it { is_expected.to contain_concat__fragment('frag_authorizer_file-provider')
+        #                       .with_content(/<property name="Initial Admin Identity">cn=admin<\/property>/)
+        # }
 
       end
 
 
-      context "on #{os} with cluster config" do
+      context "on #{os} with cluster config, implicit ssl config" do
         let(:facts) do
           facts[:concat_basedir] = '/tmp'
           facts
@@ -164,8 +166,19 @@ describe 'nifi' do
 
         let(:params) {
           {
+            :config_ssl  => true,
             :config_cluster => true,
-            :cluster_members => %w(nifi-as01a.dev nifi-as02a.dev nif-as03a.dev)
+            :cacert => 'cacert',
+            :node_cert => 'node_cert',
+            :node_private_key => 'node_key',
+            :initial_admin_identity => 'cn=admin',
+            :initial_admin_cert => 'admin_cert',
+            :initial_admin_key => 'admin_key',
+            :keystore_password => 'changeit',
+            :key_password => 'secret',
+            :client_auth => true,
+            :cluster_members => cluster_members,
+            :cluster_identities => cluster_identities,
           }
         }
 
@@ -195,6 +208,10 @@ describe 'nifi' do
           it { is_expected.to contain_file('/opt/nifi/conf/state/zookeeper/myid') }
 
           it { is_expected.to contain_nifi__cluster_state_provider('cluster_state_provider') }
+
+          it { is_expected.to contain_concat__fragment('frag_authorizer_file-provider')
+                                .with_content(/<property name="Node Identity 1">nifi-as01a\.dev<\/property>/)
+          }
         end
       end
 

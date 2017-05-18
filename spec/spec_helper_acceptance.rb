@@ -5,13 +5,15 @@ require 'beaker/puppet_install_helper'
 
 hosts.each do |host|
  if host['roles'].include?('centos') and host['roles'].include?('agent')
+  ENV["PUPPET_INSTALL_TYPE"] = "foss"
+  ENV["PUPPET_INSTALL_VERSION"] = "3.8.7-1.el7"
   run_puppet_install_helper unless ENV['BEAKER_provision'] == 'no'
   case fact_on(host, "osfamily")
   when 'RedHat'
-      case JSON.parse(fact_on(host,'os').gsub('=>',':'))['release']['major']
+      case fact_on(host,'os')['release']['major']
       when '7'
         install_package(host, 'deltarpm')
-        on host, 'yum -y update'
+        #on host, 'yum -y update'
         %w(bzip2 tar wget initscripts git rsync).each do |pkg_to_install|
           install_package(host, pkg_to_install)
         end
@@ -36,8 +38,11 @@ RSpec.configure do |c|
 
   # Configure all nodes in nodeset
   c.before :suite do
+
+
+
     # Install module and dependencies
-    puppet_module_install(:source => proj_root, :module_name => 'nifi')
+    puppet_module_install(:source => proj_root, :module_name => 'nifi', :target_module_path=>'/etc/puppetlabs/code/environments/production/modules')
     master = ''
     begin
       master = only_host_with_role(hosts, 'master')
@@ -88,7 +93,10 @@ RSpec.configure do |c|
            copy_hiera_data_to(host, "#{proj_root}/spec/fixtures/hiera/hieradata/#{f}.yaml") #?? buggy
         end
 
-        on host, puppet('module', 'install', 'puppetlabs-stdlib'), { :acceptable_exit_codes => [0,1] }
+        on host, puppet('module', 'install', 'puppetlabs-stdlib --version 4.6.0'), { :acceptable_exit_codes => [0,1] }
+        on host, puppet('module', 'install', 'puppetlabs-inifile'), { :acceptable_exit_codes => [0,1] }
+        on host, puppet('module', 'install', 'puppetlabs-concat --version 1.2.5'), { :acceptable_exit_codes => [0,1] }
+        on host, puppet('module', 'install', 'puppetlabs-java_ks --version 1.4.1'), { :acceptable_exit_codes => [0,1] }
 
       end
 

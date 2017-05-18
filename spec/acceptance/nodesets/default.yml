@@ -1,13 +1,12 @@
 HOSTS:
-  centos-7-x64:
+  nifi-as01a:
     roles:
       - agent
       - centos
     platform: el-7-x86_64
-    image: centos:7
     hypervisor: docker
-    docker_cmd: ['/sbin/init']
-    docker_container_name: puppetagent
+    image:  c7-nifi-puppet:latest
+    docker_container_name: nifi-as01a
     docker_preserve_image: false
 CONFIG:
   log_level: verbose

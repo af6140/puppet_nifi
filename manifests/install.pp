@@ -8,7 +8,6 @@ class nifi::install {
   } ->
   user {'nifi':
       ensure => 'present',
-      shell=>'/bin/nologin',
       home => '/var/lib/nifi',
       groups => ['nifi']
   }

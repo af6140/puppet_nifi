@@ -2,95 +2,99 @@
 # keystore password : used for keystore and truststore
 # key_password: the private key password
 define nifi::security(
-  $cacert = undef,
-  $node_cert = undef,
-  $node_private_key = undef,
-  $initial_admin_cert = undef,
-  $initial_admin_key = undef,
+  $cacert_path = undef,
+  $node_cert_path = undef,
+  $node_private_key_path = undef,
+  $initial_admin_cert_path = undef,
+  $initial_admin_key_path = undef,
   $keystore_password = 'changeit',
   $key_password = undef,
   $client_auth = false,
 ){
 
 
-  assert_type(String[1], $cacert)
-  assert_type(String[1], $node_cert)
-  assert_type(String[1], $node_private_key)
-  assert_type(String[1], $initial_admin_cert)
-  assert_type(String[6], $keystore_password)
+  # assert_type(String[1], $cacert)
+  # assert_type(String[1], $node_cert)
+  # assert_type(String[1], $node_private_key)
+  # assert_type(String[1], $initial_admin_cert)
+  # assert_type(String[6], $keystore_password)
+
+  validate_absolute_path($cacert_path)
+  validate_absolute_path($node_cert_path)
+  validate_absolute_path($node_private_key_path)
+  validate_absolute_path($initial_admin_cert_path)
+  validate_absolute_path($initial_admin_key_path)
 
   #validate_x509_rsa_key_pari($node_cert, $node_private_key)
 
-  file {"${::nifi::nifi_conf_dir}/certs":
-    ensure => 'directory',
-    owner => 'nifi',
-    group => 'nifi',
-    mode => '0644',
-  } ->
-  file {"${::nifi::nifi_conf_dir}/keys":
-    ensure => 'directory',
-    owner => 'nifi',
-    group => 'nifi',
-    mode => '0600',
-  }
-  file {"${::nifi::nifi_conf_dir}/certs/ca.pem":
-    ensure => 'present',
-    owner => 'nifi',
-    group => 'nifi',
-    mode => '0644',
-    content => $cacert,
-    require => File["${::nifi::nifi_conf_dir}/certs"]
-  }
-  file {"${::nifi::nifi_conf_dir}/certs/${::fqdn}.pem":
-    ensure => 'present',
-    owner => 'nifi',
-    group => 'nifi',
-    mode => '0644',
-    content => $node_cert,
-    require => File["${::nifi::nifi_conf_dir}/certs"]
-  }
-  file {"/opt/nifi/conf/keys/${::fqdn}_private.key":
-    ensure => 'present',
-    owner => 'nifi',
-    group => 'nifi',
-    mode => '0600',
-    content => $node_private_key,
-    require => File["${::nifi::nifi_conf_dir}/keys"]
-  }
-
-  file { "/opt/nifi/conf/certs/${::fqdn}_initial_admin.pem":
-    ensure => 'present',
-    owner => 'nifi',
-    group => 'nifi',
-    mode => '0644',
-    content => $initial_admin_cert,
-    require => File["${::nifi::nifi_conf_dir}/certs"]
-  }
-  file { "/opt/nifi/conf/keys/${::fqdn}_initial_admin.key":
-    ensure => 'present',
-    owner => 'nifi',
-    group => 'nifi',
-    mode => '0600',
-    content => $initial_admin_key,
-    require => File["${::nifi::nifi_conf_dir}/keys"]
-  }
+  # file {"${::nifi::nifi_conf_dir}/certs":
+  #   ensure => 'directory',
+  #   owner => 'nifi',
+  #   group => 'nifi',
+  #   mode => '0644',
+  # } ->
+  # file {"${::nifi::nifi_conf_dir}/keys":
+  #   ensure => 'directory',
+  #   owner => 'nifi',
+  #   group => 'nifi',
+  #   mode => '0600',
+  # }
+  # file {"${::nifi::nifi_conf_dir}/certs/ca.pem":
+  #   ensure => 'present',
+  #   owner => 'nifi',
+  #   group => 'nifi',
+  #   mode => '0644',
+  #   content => $cacert,
+  #   require => File["${::nifi::nifi_conf_dir}/certs"]
+  # }
+  # file {"${::nifi::nifi_conf_dir}/certs/${::fqdn}.pem":
+  #   ensure => 'present',
+  #   owner => 'nifi',
+  #   group => 'nifi',
+  #   mode => '0644',
+  #   content => $node_cert,
+  #   require => File["${::nifi::nifi_conf_dir}/certs"]
+  # }
+  # file {"/opt/nifi/conf/keys/${::fqdn}_private.key":
+  #   ensure => 'present',
+  #   owner => 'nifi',
+  #   group => 'nifi',
+  #   mode => '0600',
+  #   content => $node_private_key,
+  #   require => File["${::nifi::nifi_conf_dir}/keys"]
+  # }
+  #
+  # file { "/opt/nifi/conf/certs/${::fqdn}_initial_admin.pem":
+  #   ensure => 'present',
+  #   owner => 'nifi',
+  #   group => 'nifi',
+  #   mode => '0644',
+  #   content => $initial_admin_cert,
+  #   require => File["${::nifi::nifi_conf_dir}/certs"]
+  # }
+  # file { "/opt/nifi/conf/keys/${::fqdn}_initial_admin.key":
+  #   ensure => 'present',
+  #   owner => 'nifi',
+  #   group => 'nifi',
+  #   mode => '0600',
+  #   content => $initial_admin_key,
+  #   require => File["${::nifi::nifi_conf_dir}/keys"]
+  # }
 
   java_ks {'nifi_truststore:ca':
     ensure => latest,
-    certificate => '/opt/nifi/conf/certs/ca.pem',
+    certificate => $cacert_path,
     target => '/opt/nifi/conf/truststore.jks',
     trustcacerts => true,
-    password => $keystore_password,
-    require => File["${::nifi::nifi_conf_dir}/certs/ca.pem"],
+    password => $keystore_password
   }
   java_ks {"nifi_keystore:${fqdn}":
     ensure => latest,
     target => "${::nifi::nifi_conf_dir}/keystore.jks",
-    certificate => "${::nifi::nifi_conf_dir}/certs/${::fqdn}.pem",
-    private_key => "${::nifi::nifi_conf_dir}/keys/${::fqdn}_private.pem",
+    certificate => $node_cert_path,
+    private_key => $node_private_key_path,
     password => $keystore_password,
     destkeypass => $key_password,
-    require => File["${::nifi::nifi_conf_dir}/keys/${::fqdn}_private.key", "${::nifi::nifi_conf_dir}/certs/${::fqdn}.pem"]
   }
 
   ini_setting { "nifi_setting_nifi_security_keystore":

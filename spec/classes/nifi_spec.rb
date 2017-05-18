@@ -121,12 +121,12 @@ describe 'nifi' do
           {
             :config_cluster => false,
             :config_ssl => true,
-            :cacert => 'cacert',
-            :node_cert => 'node_cert',
-            :node_private_key => 'node_key',
+            :cacert_path => '/etc/pki/certs/ca.pem',
+            :node_cert_path => '/etc/pki/certs/node.pem',
+            :node_private_key_path => '/etc/pki/keys/node_key.pem',
             :initial_admin_identity => 'cn=admin',
-            :initial_admin_cert => 'admin_cert',
-            :initial_admin_key => 'admin_key',
+            :initial_admin_cert_path => '/etc/pki/certs/nifi_admin.pem',
+            :initial_admin_key_path => '/etc/pki/keys/nifi_amdin.key',
             :keystore_password => 'changeit',
             :key_password => 'secret',
             :client_auth => true,
@@ -140,7 +140,6 @@ describe 'nifi' do
 
         #testing security setup
         it { is_expected.to contain_nifi__security('nifi_properties_security_setting') }
-        it { is_expected.to contain_file('/opt/nifi/conf/certs/ca.pem').with_content(/cacert/) }
         it { is_expected.to contain_ini_setting('nifi_setting_nifi_security_keystorePasswd').with_setting('nifi.security.keystorePasswd')
                               .with_value('changeit')
         }
@@ -168,12 +167,12 @@ describe 'nifi' do
           {
             :config_ssl  => true,
             :config_cluster => true,
-            :cacert => 'cacert',
-            :node_cert => 'node_cert',
-            :node_private_key => 'node_key',
+            :cacert_path => '/etc/pki/certs/ca.pem',
+            :node_cert_path => '/etc/pki/certs/node.pem',
+            :node_private_key_path => '/etc/pki/keys/node_key.pem',
             :initial_admin_identity => 'cn=admin',
-            :initial_admin_cert => 'admin_cert',
-            :initial_admin_key => 'admin_key',
+            :initial_admin_cert_path => '/etc/pki/certs/nifi_admin.pem',
+            :initial_admin_key_path => '/etc/pki/keys/nifi_amdin.key',
             :keystore_password => 'changeit',
             :key_password => 'secret',
             :client_auth => true,

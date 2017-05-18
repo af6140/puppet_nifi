@@ -238,11 +238,11 @@ class nifi::config(
       provider_properties => $authorizer_props
     }
     nifi::security { 'nifi_properties_security_setting':
-      cacert             => $::nifi::cacert,
-      node_cert          => $::nifi::node_cert,
-      node_private_key   => $::nifi::node_private_key,
-      initial_admin_cert => $::nifi::initial_admin_cert,
-      initial_admin_key  => $::nifi::initial_admin_key,
+      cacert_path             => $::nifi::cacert_path,
+      node_cert_path          => $::nifi::node_cert_path,
+      node_private_key_path   => $::nifi::node_private_key_path,
+      initial_admin_cert_path => $::nifi::initial_admin_cert_path,
+      initial_admin_key_path  => $::nifi::initial_admin_key_path,
       keystore_password  => $::nifi::keystore_password,
       key_password       => $::nifi::key_password,
       client_auth        => $::nifi::client_auth,

@@ -1,7 +1,7 @@
 {
-  "name": "entertainment-nifi",
+  "name": "af6140-nifi",
   "version": "0.1.0",
-  "author": "entertainment",
+  "author": "af6140",
   "summary": "",
   "license": "Apache-2.0",
   "source": "",
@@ -11,7 +11,17 @@
     {
       "name": "puppetlabs-stdlib",
       "version_requirement": ">= 1.0.0"
+    },
+    {
+      "name": "puppetlabs-concat"
+    },
+    {
+      "name": "puppetlabs-inifile"
+    },
+    {
+      "name": "puppetlabs-java_ks"
     }
+
   ],
   "operatingsystem_support": [
     {

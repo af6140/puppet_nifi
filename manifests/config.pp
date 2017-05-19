@@ -50,7 +50,7 @@ class nifi::config(
     section_prefix => '',
     section_suffix => '',
     setting => 'java.arg.7',
-    value => "-XX:ReservedCodeCacheSize=256m"
+    value => "-XX:ReservedCodeCacheSize=96m"
   }
   ini_setting { "nifi_bootstrap_jvm_codecache_flush_size":
     ensure => present,
@@ -58,7 +58,7 @@ class nifi::config(
     section_prefix => '',
     section_suffix => '',
     setting => 'java.arg.8',
-    value => "-XX:CodeCacheFlushingMinimumFreeSpace=10m"
+    value => "-XX:CodeCacheFlushingMinimumFreeSpace=4m"
   }
   ini_setting { "nifi_bootstrap_jvm_codecache_flush":
     ensure => present,
@@ -100,14 +100,27 @@ class nifi::config(
 
   #manage ldap id mapping
 
-  if ! empty($nifi::ldap_id_mappings) {
+  if ! empty($nifi::id_mappings) {
     #use index 0 to override default pattern
-    $nifi::ldap_id_mappings.each |$index, $entry| {
+    $nifi::id_mappings.each |$index, $entry| {
+      $conf_index = $entry['index']
+      $conf_ensure = $entry['ensure']
+      if $conf_index {
+        $real_index = $conf_index
+      }else {
+        $real_index = $index
+      }
+
+      if $conf_ensure {
+        $real_ensure = $conf_ensure
+      }else {
+        $real_ensure = 'present'
+      }
       nifi::idmapping_dn { "ldap_id_mapping_${index}":
         pattern => $entry['pattern'],
         value => $entry['value'],
-        index => $entry['index'],
-        ensure => $entry['ensure']
+        index => $real_index,
+        ensure => $real_ensure
       }
     }
   }

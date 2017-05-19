@@ -3,7 +3,8 @@ require 'spec_helper'
 describe 'nifi' do
   let(:hiera_config) { 'spec/fixtures/hiera/hiera.yaml' }
   hiera = Hiera.new(:config => 'spec/fixtures/hiera/hiera.yaml')
-
+  id_mappings = hiera.lookup('nifi_profiles::id_mapping', nil, 'common')
+  puts "ID Mappings: #{id_mappings}"
   cluster_members = %w(nifi-as01a.dev nifi-as02a.dev nif-as03a.dev)
   cluster_identities = %w(nifi-as01a.dev nifi-as02a.dev nif-as03a.dev)
   context 'supported operating systems' do
@@ -18,7 +19,8 @@ describe 'nifi' do
         let(:params) {
           {
             :config_cluster => false,
-            :cluster_members => %w(nifi-as01a.dev nifi-as02a.dev nif-as03a.dev)
+            :cluster_members => %w(nifi-as01a.dev nifi-as02a.dev nif-as03a.dev),
+            :id_mappings => id_mappings,
           }
         }
 

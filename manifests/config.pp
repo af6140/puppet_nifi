@@ -11,7 +11,7 @@ class nifi::config(
 
   notify {"version :${nifi_cal_version}":}
 
-  assert_type(Pattern[/(\d)+\.(\d)+\.(\d)+/] ,$nifi_cal_version)
+  #assert_type(Pattern[/(\d)+\.(\d)+\.(\d)+/] ,$nifi_cal_version)
 
 
 

@@ -134,12 +134,18 @@ class nifi::config(
       }
     }
 
+    if ! $zookeeper_connect_string {
+      $real_zookeeper_connect_string =''
+    }else {
+      $real_zookeeper_connect_string = $zookeeper_connect_string
+    }
+
     $nifi_cluster_configs = {
       'nifi.cluster.is.node' => 'true',
       'nifi.cluster.node.address' => $::fqdn,
       'nifi.cluster.node.protocol.port' => '9999',
       'nifi.cluster.node.event.history.size'=> '100',
-      'nifi.zookeeper.connect.string' => $zookeeper_connect_string,
+      'nifi.zookeeper.connect.string' => $real_zookeeper_connect_string,
       'nifi.state.management.embedded.zookeeper.start' => 'true',
       'nifi.remote.input.host' => $::fqdn,
       'nifi.remote.input.socket.port' => '9998'

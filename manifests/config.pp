@@ -21,54 +21,16 @@ class nifi::config(
   $minHeapArgs = "-Xms${::nifi::min_heap}"
   $maxHeapArgs = "-Xmx${::nifi::max_heap}"
 
-  ini_setting { "nifi_bootstrap_jvm_minheap":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'java.arg.2',
-    value => $minHeapArgs,
+  $bootstrap_properties = {
+    'java.arg.2' => $minHeapArgs,
+    'java.arg.3' => $maxHeapArgs,
+    'java.arg.8' => "-XX:CodeCacheFlushingMinimumFreeSpace=4m",
+    'java.arg.9' => "-XX:+UseCodeCacheFlushing",
   }
 
-  ini_setting { "nifi_bootstrap_jvm_maxheap":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'java.arg.3',
-    value => $maxHeapArgs,
+  nifi::bootstrap_properties { 'bootstrap_jvm_conf':
+    properties => $bootstrap_properties
   }
-
-  #java 8 codecache issue https://docs.hortonworks.com/HDPDocuments/HDF2/HDF-2.0.0/bk_administration/content/bootstrap_properties.html
-  #java.arg.7=-XX:ReservedCodeCacheSize=256m
-  #java.arg.8=-XX:CodeCacheFlushingMinimumFreeSpace=10m
-  #java.arg.9=-XX:+UseCodeCacheFlushing
-
-  ini_setting { "nifi_bootstrap_jvm_codecache_size":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'java.arg.7',
-    value => "-XX:ReservedCodeCacheSize=96m"
-  }
-  ini_setting { "nifi_bootstrap_jvm_codecache_flush_size":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'java.arg.8',
-    value => "-XX:CodeCacheFlushingMinimumFreeSpace=4m"
-  }
-  ini_setting { "nifi_bootstrap_jvm_codecache_flush":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/bootstrap.conf",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'java.arg.8',
-    value => "-XX:+UseCodeCacheFlushing"
-  }
-
 
   # login provider configuration
   concat {'/opt/nifi/conf/login-identity-providers.xml':
@@ -154,16 +116,16 @@ class nifi::config(
     }
 
     $zookeeper_connect_string = join(suffix($nifi::cluster_members, ':2181'), ',')
-    $nifi_cluster_configs = {
-      'nifi_cluster_is_node' => 'true',
-      'nifi_cluster_node_address' => $::fqdn,
-      'nifi_cluster_node_protocol_port' => '9999',
-      'nifi_cluster_node_event_history_size'=> '100',
-      'nifi_zookeeper_connect_string' => $zookeeper_connect_string,
-      'nifi_state_management_embedded_zookeeper_start' => 'true',
-      'nifi_remote_input_host' => $::fqdn,
-      'nifi_remote_input_socket_port' => '9998'
-    }
+    # $nifi_cluster_configs = {
+    #   'nifi_cluster_is_node' => 'true',
+    #   'nifi_cluster_node_address' => $::fqdn,
+    #   'nifi_cluster_node_protocol_port' => '9999',
+    #   'nifi_cluster_node_event_history_size'=> '100',
+    #   'nifi_zookeeper_connect_string' => $zookeeper_connect_string,
+    #   'nifi_state_management_embedded_zookeeper_start' => 'true',
+    #   'nifi_remote_input_host' => $::fqdn,
+    #   'nifi_remote_input_socket_port' => '9998'
+    # }
 
     #cluster talkes to all embedded zookeeper
     nifi::cluster_state_provider {'cluster_state_provider':
@@ -171,6 +133,18 @@ class nifi::config(
         'connect_string' => $zookeeper_connect_string
       }
     }
+
+    $nifi_cluster_configs = {
+      'nifi.cluster.is.node' => 'true',
+      'nifi.cluster.node.address' => $::fqdn,
+      'nifi.cluster.node.protocol.port' => '9999',
+      'nifi.cluster.node.event.history.size'=> '100',
+      'nifi.zookeeper.connect.string' => $zookeeper_connect_string,
+      'nifi.state.management.embedded.zookeeper.start' => 'true',
+      'nifi.remote.input.host' => $::fqdn,
+      'nifi.remote.input.socket.port' => '9998'
+    }
+
     #need set cluster memeber node identity in authorizers.xml
     #this really depends on the id mapping rule
     # for example, can use
@@ -185,9 +159,9 @@ class nifi::config(
   }else {
     #disable cluster start
     $nifi_cluster_configs = {
-      'nifi_cluster_is_node' => 'false',
-      'nifi_zookeeper_connect_string' => '',
-      'nifi_state_management_embedded_zookeeper_start' => 'false',
+      'nifi.cluster.is_node' => 'false',
+      'nifi.zookeeper.connect.string' => '',
+      'nifi.state.management.embedded.zookeeper.start' => 'false',
     }
 
     #default cluster state provider
@@ -199,18 +173,21 @@ class nifi::config(
 
 
   $active_properties = deep_merge($::nifi::params::nifi_properties, $::nifi::nifi_properties, $nifi_cluster_configs)
-  $active_properties.each |String $property_name, $property_value| {
-    #notify {"Set setting: ${property_value}":}
-    ini_setting { "nifi_setting_${$property_name}":
-      ensure => present,
-      path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-      section_prefix => '',
-      section_suffix => '',
-      setting => regsubst($property_name, '_', '.', 'G'),
-      value => $property_value,
-    }
-  }
+  # $active_properties.each |String $property_name, $property_value| {
+  #   #notify {"Set setting: ${property_value}":}
+  #   ini_setting { "nifi_setting_${$property_name}":
+  #     ensure => present,
+  #     path   => "${::nifi::nifi_conf_dir}/nifi.properties",
+  #     section_prefix => '',
+  #     section_suffix => '',
+  #     setting => regsubst($property_name, '_', '.', 'G'),
+  #     value => $property_value,
+  #   }
+  # }
 
+  nifi::config_properties {'nifi_general_configs':
+    properties => $active_properties
+  }
   #manage authorizer
   concat {'/opt/nifi/conf/authorizers.xml':
     ensure => 'present',

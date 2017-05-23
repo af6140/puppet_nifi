@@ -16,9 +16,6 @@
       "name": "puppetlabs-concat"
     },
     {
-      "name": "puppetlabs-inifile"
-    },
-    {
       "name": "puppetlabs-java_ks"
     }
 

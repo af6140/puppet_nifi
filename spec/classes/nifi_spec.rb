@@ -36,19 +36,6 @@ describe 'nifi' do
           it { is_expected.to contain_service('nifi') }
           it { is_expected.to contain_package('nifi') }
 
-          it { is_expected.to contain_ini_setting('nifi_setting_nifi_flow_configuration_file') }
-
-          it { is_expected.to contain_ini_setting('nifi_bootstrap_jvm_minheap').with_setting('java.arg.2').with_value('-Xms512m') }
-          it { is_expected.to contain_ini_setting('nifi_bootstrap_jvm_maxheap').with_setting('java.arg.3').with_value('-Xmx512m') }
-
-          it { is_expected.to contain_ini_setting('nifi_setting_nifi_web_http_port').with_setting('nifi.web.http.port')
-                                .with_value('8080')
-          }
-
-          it { is_expected.to contain_ini_setting('nifi_setting_nifi_web_http_host').with_setting('nifi.web.http.host')
-                                .with_value('nifi-as01a.dev')
-          }
-
           it { is_expected.to contain_concat('/opt/nifi/conf/login-identity-providers.xml') }
 
           it { is_expected.to contain_concat__fragment('id_provider_start') }
@@ -142,12 +129,6 @@ describe 'nifi' do
 
         #testing security setup
         it { is_expected.to contain_nifi__security('nifi_properties_security_setting') }
-        it { is_expected.to contain_ini_setting('nifi_setting_nifi_security_keystorePasswd').with_setting('nifi.security.keystorePasswd')
-                              .with_value('changeit')
-        }
-        it { is_expected.to contain_ini_setting('nifi_setting_nifi_security_keyPasswd').with_setting('nifi.security.keyPasswd')
-                              .with_value('secret')
-        }
         it { is_expected.to contain_java_ks('nifi_keystore:nifi-as01a.dev') }
         it { is_expected.to contain_java_ks('nifi_truststore:ca') }
 
@@ -195,16 +176,8 @@ describe 'nifi' do
           it { is_expected.to contain_service('nifi') }
           it { is_expected.to contain_package('nifi') }
 
-          it { is_expected.to contain_ini_setting('nifi_setting_nifi_flow_configuration_file') }
 
-          it { is_expected.to contain_ini_setting('nifi_setting_nifi_state_management_embedded_zookeeper_start')
-                                .with_setting('nifi.state.management.embedded.zookeeper.start')
-                                .with_value('true')
-          }
           it { is_expected.to contain_nifi__embedded_zookeeper('nifi_zookeeper_config') }
-          it { is_expected.to contain_ini_setting('zookeeper_member_1') }
-
-          it { is_expected.to contain_ini_setting('nifi_setting_nifi_cluster_is_node').with_setting('nifi.cluster.is.node').with_value('true') }
 
           it { is_expected.to contain_file('/opt/nifi/conf/state/zookeeper/myid') }
 

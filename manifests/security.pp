@@ -97,70 +97,82 @@ define nifi::security(
     destkeypass => $key_password,
   }
 
-  ini_setting { "nifi_setting_nifi_security_keystore":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'nifi.security.keystore',
-    value => '/opt/nifi/conf/keystore.jks'
+  # ini_setting { "nifi_setting_nifi_security_keystore":
+  #   ensure => present,
+  #   path   => "${::nifi::nifi_conf_dir}/nifi.properties",
+  #   section_prefix => '',
+  #   section_suffix => '',
+  #   setting => 'nifi.security.keystore',
+  #   value => '/opt/nifi/conf/keystore.jks'
+  # }
+  # ini_setting { "nifi_setting_nifi_security_keystoreType":
+  #   ensure => present,
+  #   path   => "${::nifi::nifi_conf_dir}/nifi.properties",
+  #   section_prefix => '',
+  #   section_suffix => '',
+  #   setting => 'nifi.security.keystoreType',
+  #   value => 'jks'
+  # }
+  # ini_setting { "nifi_setting_nifi_security_keystorePasswd":
+  #   ensure => present,
+  #   path   => "${::nifi::nifi_conf_dir}/nifi.properties",
+  #   section_prefix => '',
+  #   section_suffix => '',
+  #   setting => 'nifi.security.keystorePasswd',
+  #   value => $keystore_password
+  # }
+  # ini_setting { "nifi_setting_nifi_security_keyPasswd":
+  #   ensure => present,
+  #   path   => "${::nifi::nifi_conf_dir}/nifi.properties",
+  #   section_prefix => '',
+  #   section_suffix => '',
+  #   setting => 'nifi.security.keyPasswd',
+  #   value => $key_password,
+  # }
+  #
+  # ini_setting { "nifi_setting_nifi_security_truststore":
+  #   ensure => present,
+  #   path   => "${::nifi::nifi_conf_dir}/nifi.properties",
+  #   section_prefix => '',
+  #   section_suffix => '',
+  #   setting => 'nifi.security.truststore',
+  #   value => '/opt/nifi/conf/truststore.jks'
+  # }
+  # ini_setting { "nifi_setting_nifi_security_truststoreType":
+  #   ensure => present,
+  #   path   => "${::nifi::nifi_conf_dir}/nifi.properties",
+  #   section_prefix => '',
+  #   section_suffix => '',
+  #   setting => 'nifi.security.truststoreType',
+  #   value => 'jks'
+  # }
+  # ini_setting { "nifi_setting_nifi_security_truststorePasswd":
+  #   ensure => present,
+  #   path   => "${::nifi::nifi_conf_dir}/nifi.properties",
+  #   section_prefix => '',
+  #   section_suffix => '',
+  #   setting => 'nifi.security.truststorePasswd',
+  #   value => $keystore_password
+  # }
+  #
+  # ini_setting { "nifi_setting_nifi_security_needClientAuth":
+  #   ensure => present,
+  #   path   => "${::nifi::nifi_conf_dir}/nifi.properties",
+  #   section_prefix => '',
+  #   section_suffix => '',
+  #   setting => 'nifi.security.needClientAuth',
+  #   value => $client_auth
+  # }
+  $security_properties = {
+    'nifi.security.keystore'=>'/opt/nifi/conf/keystore.jks',
+    'nifi.security.keystoreType' => 'jks',
+    'nifi.security.keystorePasswd' => $keystore_password,
+    'nifi.security.keyPasswd' => $key_password,
+    'nifi.security.truststore' => '/opt/nifi/conf/truststore.jks',
+    'nifi.security.truststorePasswd' => $keystore_password,
+    'nifi.security.needClientAuth' => $client_auth,
   }
-  ini_setting { "nifi_setting_nifi_security_keystoreType":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'nifi.security.keystoreType',
-    value => 'jks'
-  }
-  ini_setting { "nifi_setting_nifi_security_keystorePasswd":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'nifi.security.keystorePasswd',
-    value => $keystore_password
-  }
-  ini_setting { "nifi_setting_nifi_security_keyPasswd":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'nifi.security.keyPasswd',
-    value => $key_password,
-  }
-
-  ini_setting { "nifi_setting_nifi_security_truststore":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'nifi.security.truststore',
-    value => '/opt/nifi/conf/truststore.jks'
-  }
-  ini_setting { "nifi_setting_nifi_security_truststoreType":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'nifi.security.truststoreType',
-    value => 'jks'
-  }
-  ini_setting { "nifi_setting_nifi_security_truststorePasswd":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'nifi.security.truststorePasswd',
-    value => $keystore_password
-  }
-
-  ini_setting { "nifi_setting_nifi_security_needClientAuth":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'nifi.security.needClientAuth',
-    value => $client_auth
+  nifi::config_properties {'nifi_security_props':
+    properties => $security_properties
   }
 }

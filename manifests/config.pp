@@ -184,7 +184,7 @@ class nifi::config(
   #     value => $property_value,
   #   }
   # }
-
+  notify {"$active_properties": }
   nifi::config_properties {'nifi_general_configs':
     properties => $active_properties
   }

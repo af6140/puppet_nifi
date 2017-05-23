@@ -24,7 +24,6 @@ class nifi::params {
     'nifi.web.https.port' => '8443',
     'nifi.web.http.host' => $::fqdn,
     'nifi.web.https.host' => $::fqdn,
-    'nifi.web.http.network.interface_default' => '',
     'nifi.security.user.authorizer' => 'file-provider',
     'nifi.cluster.is.node' => 'false',
   }

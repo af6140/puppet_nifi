@@ -2,6 +2,7 @@ define nifi::ldap_provider (
   $identifier = 'ldap-provider',
   $provider_class = 'org.apache.nifi.ldap.LdapProvider',
   $provider_properties = {},
+  $conf_dir = $::nifi::nifi_conf_dir,
 ){
 
   $default_ldap_properties = {
@@ -54,11 +55,12 @@ define nifi::ldap_provider (
 
   concat::fragment { "frag_${identifier}":
     order   => '02',
-    target  => "${::nifi::nifi_conf_dir}/login-identity-providers.xml",
+    target  => "${conf_dir}/login-identity-providers.xml",
     content => template('nifi/idmapping/frag_ldap_provider.erb')
   }
 
   nifi::config_properties {'nifi_properties_ldap_provider':
+    conf_dir => $conf_dir,
     properties => {
       'nifi.security.user.login.identity.provider' => $identifier
     }

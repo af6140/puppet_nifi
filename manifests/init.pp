@@ -23,7 +23,7 @@ class nifi (
   Optional[Array[String[1]]] $cluster_identities=[],
   Hash[String[1],String[1]] $ldap_provider_configs = {},
   Optional[Array[Struct[{pattern => String[1], value=>String[1], ensure => Optional[Enum[present,absent]], index => Optional[Integer[0,9]] }],0,9]] $id_mappings = undef,
-  Boolean $config_ssl=false,
+  Boolean $config_ssl=true,
   Optional[String[1]] $initial_admin_identity = undef,
   $cacert_path = undef,
   $node_cert_path = undef,

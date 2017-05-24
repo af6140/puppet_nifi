@@ -24,7 +24,7 @@ class nifi::config(
   $bootstrap_properties = {
     'java.arg.2' => $minHeapArgs,
     'java.arg.3' => $maxHeapArgs,
-    'java.arg.8' => "-XX:CodeCacheFlushingMinimumFreeSpace=4m",
+    'java.arg.8' => "-XX:CodeCacheMinimumFreeSpace=10m",
     'java.arg.9' => "-XX:+UseCodeCacheFlushing",
   }
 
@@ -43,13 +43,13 @@ class nifi::config(
   concat::fragment{ 'id_provider_start':
     order => '01',
     target => '/opt/nifi/conf/login-identity-providers.xml',
-    content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<loginIdentityProviders>"
+    content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<loginIdentityProviders>\n"
   }
 
   concat::fragment{ 'id_provider_end':
     order => '99',
     target => '/opt/nifi/conf/login-identity-providers.xml',
-    content => "</loginIdentityProviders>"
+    content => "\n</loginIdentityProviders>"
   }
 
   #id provider configs is optional
@@ -97,13 +97,13 @@ class nifi::config(
   concat::fragment{ 'state_provider_start':
     order => '01',
     target => '/opt/nifi/conf/state-management.xml',
-    content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<stateManagement>"
+    content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<stateManagement>\n"
   }
 
   concat::fragment{ 'state_provider_end':
     order => '99',
     target => '/opt/nifi/conf/state-management.xml',
-    content => "</stateManagement>"
+    content => "\n</stateManagement>"
   }
   #local provider always exists
   nifi::local_state_provider {'local_state_provider':
@@ -116,16 +116,6 @@ class nifi::config(
     }
 
     $zookeeper_connect_string = join(suffix($nifi::cluster_members, ':2181'), ',')
-    # $nifi_cluster_configs = {
-    #   'nifi_cluster_is_node' => 'true',
-    #   'nifi_cluster_node_address' => $::fqdn,
-    #   'nifi_cluster_node_protocol_port' => '9999',
-    #   'nifi_cluster_node_event_history_size'=> '100',
-    #   'nifi_zookeeper_connect_string' => $zookeeper_connect_string,
-    #   'nifi_state_management_embedded_zookeeper_start' => 'true',
-    #   'nifi_remote_input_host' => $::fqdn,
-    #   'nifi_remote_input_socket_port' => '9998'
-    # }
 
     #cluster talkes to all embedded zookeeper
     nifi::cluster_state_provider {'cluster_state_provider':
@@ -211,7 +201,7 @@ class nifi::config(
   concat::fragment{ 'authorizers_end':
     order => '99',
     target => '/opt/nifi/conf/authorizers.xml',
-    content => "</authorizers>"
+    content => "\n</authorizers>"
   }
 
   if $::nifi::config_ssl{

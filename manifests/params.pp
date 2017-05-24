@@ -9,6 +9,7 @@ class nifi::params {
       $package_name = 'nifi'
       $service_name = 'nifi'
       $package_version = 'present'
+      $nifi_home = '/opt/nifi'
       $nifi_conf_dir = '/opt/nifi/conf'
       $custom_properties_file = '/opt/nifi/flow/custom.properties'
     }

@@ -14,6 +14,7 @@ class nifi (
   String[1] $package_name = $::nifi::params::package_name,
   $service_name = $::nifi::params::service_name,
   $package_version = $::nifi::params::package_version,
+  $nifi_home = $::nifi::params::nifi_home,
   $nifi_conf_dir = $::nifi::params::nifi_conf_dir,
   Optional[Hash[String[1],String[1]]] $nifi_properties = {},
   $min_heap = '512m',

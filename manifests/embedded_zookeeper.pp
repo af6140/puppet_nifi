@@ -19,19 +19,19 @@ define nifi::embedded_zookeeper (
       # echo $id > .state/zookeeper/myid
 
       if $::fqdn == $member {
-        file { "${::nifi::nifi_conf_dir}/state/":
+        file { "${::nifi::nifi_home}/state/":
           ensure => 'directory',
           owner  => 'nifi',
           group  => 'nifi',
           mode   => '0755'
         } ->
-          file { "${::nifi::nifi_conf_dir}/state/zookeeper":
+          file { "${::nifi::nifi_home}/state/zookeeper":
             ensure => 'directory',
             owner  => 'nifi',
             group  => 'nifi',
             mode   => '0755'
           } ->
-          file { "${::nifi::nifi_conf_dir}/state/zookeeper/myid":
+          file { "${::nifi::nifi_home}/state/zookeeper/myid":
             ensure  => 'present',
             content => "$real_index",
             owner   => 'nifi',

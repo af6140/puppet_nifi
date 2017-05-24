@@ -9,7 +9,7 @@ class nifi::config(
   $pkg_version_specs = split($nifi::package_version, "-")
   $nifi_cal_version = $pkg_version_specs[0]
 
-  notify {"version :${nifi_cal_version}":}
+  notify {"version :${nifi_cal_version}": message => ''}
 
   #assert_type(Pattern[/(\d)+\.(\d)+\.(\d)+/] ,$nifi_cal_version)
 
@@ -170,8 +170,16 @@ class nifi::config(
     $cluster_ids_hash = {}
   }
 
+  $tmp_config_properties = $::nifi::nifi_properties.map |$key, $value | {
+    #replace  _ with '.'
+    $keyspecs = split($key, '_')
+    $prop_key = join($keyspecs, '.')
+    [$prop_key, $value]
+  }
 
-  $active_properties = deep_merge($::nifi::params::nifi_properties, $::nifi::nifi_properties, $nifi_cluster_configs)
+  $normaized_config_properties = hash(flatten($tmp_config_properties))
+
+  $active_properties = deep_merge($::nifi::params::nifi_properties, $normaized_config_properties, $nifi_cluster_configs)
 
   #notify {"$active_properties": }
   nifi::config_properties {'nifi_general_configs':

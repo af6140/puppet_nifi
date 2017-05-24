@@ -218,11 +218,8 @@ class nifi::config(
     }
 
     #if configure cluster, add node identities to authorizers.xml
-    if $::nifi::config_cluster {
-      $authorizer_props = deep_merge($admin_id_hash, $cluster_ids_hash)
-    }else {
-      $authorizer_props = {}
-    }
+    $authorizer_props = deep_merge($admin_id_hash, $cluster_ids_hash)
+
     nifi::file_authorizer { 'nifi_file_authorizer':
       provider_properties => $authorizer_props
     }

@@ -33,7 +33,7 @@ define nifi::embedded_zookeeper (
           } ->
           file { "${::nifi::nifi_conf_dir}/state/zookeeper/myid":
             ensure  => 'present',
-            content => $real_index,
+            content => "$real_index",
             owner   => 'nifi',
             group   => 'nifi',
             mode    => '0644'

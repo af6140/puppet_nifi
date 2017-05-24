@@ -20,7 +20,7 @@ define nifi::idmapping_dn (
     "nifi.security.identity.mapping.value.dn${real_index}" => $value
   }
 
-  nifi::config_properties {'nifi_idmapping_configs':
+  nifi::config_properties {"nifi_idmapping_configs_${index}":
     properties => $id_mapping_props
   }
 }

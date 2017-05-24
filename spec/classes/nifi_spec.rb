@@ -184,7 +184,7 @@ describe 'nifi' do
 
           it { is_expected.to contain_nifi__embedded_zookeeper('nifi_zookeeper_config') }
 
-          it { is_expected.to contain_file('/opt/nifi/conf/state/zookeeper/myid') }
+          it { is_expected.to contain_file('/opt/nifi/state/zookeeper/myid') }
 
           it { is_expected.to contain_nifi__cluster_state_provider('cluster_state_provider') }
 

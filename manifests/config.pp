@@ -165,7 +165,7 @@ class nifi::config(
   }else {
     #disable cluster start
     $nifi_cluster_configs = {
-      'nifi.cluster.is_node' => 'false',
+      'nifi.cluster.is.node' => 'false',
       'nifi.zookeeper.connect.string' => '',
       'nifi.state.management.embedded.zookeeper.start' => 'false',
     }

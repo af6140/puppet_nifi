@@ -15,23 +15,6 @@ define nifi::idmapping_dn (
     #1 is 2
     $real_index=$index+1
   }
-  # ini_setting{"idmapping_dn_pattern_${real_index}":
-  #   ensure => $ensure,
-  #   path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-  #   section_prefix => '',
-  #   section_suffix => '',
-  #   setting => "nifi.security.identity.mapping.pattern.dn${real_index}",
-  #   value => $pattern
-  # }
-  #
-  # ini_setting{"idmapping_dn_value_${real_index}":
-  #   ensure => $ensure,
-  #   path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-  #   section_prefix => '',
-  #   section_suffix => '',
-  #   setting => "nifi.security.identity.mapping.value.dn${real_index}",
-  #   value => $value
-  # }
   $id_mapping_props= {
     "nifi.security.identity.mapping.pattern.dn${real_index}" => $pattern,
     "nifi.security.identity.mapping.value.dn${real_index}" => $value

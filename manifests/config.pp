@@ -171,18 +171,8 @@ class nifi::config(
 
 
   $active_properties = deep_merge($::nifi::params::nifi_properties, $::nifi::nifi_properties, $nifi_cluster_configs)
-  # $active_properties.each |String $property_name, $property_value| {
-  #   #notify {"Set setting: ${property_value}":}
-  #   ini_setting { "nifi_setting_${$property_name}":
-  #     ensure => present,
-  #     path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-  #     section_prefix => '',
-  #     section_suffix => '',
-  #     setting => regsubst($property_name, '_', '.', 'G'),
-  #     value => $property_value,
-  #   }
-  # }
-  notify {"$active_properties": }
+
+  #notify {"$active_properties": }
   nifi::config_properties {'nifi_general_configs':
     properties => $active_properties
   }

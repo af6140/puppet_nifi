@@ -170,6 +170,7 @@ define nifi::security(
     'nifi.security.keyPasswd' => $key_password,
     'nifi.security.truststore' => '/opt/nifi/conf/truststore.jks',
     'nifi.security.truststorePasswd' => $keystore_password,
+    'nifi.security.truststoreType' => 'jks',
     'nifi.security.needClientAuth' => $client_auth,
   }
   nifi::config_properties {'nifi_security_props':

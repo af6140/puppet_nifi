@@ -6,7 +6,7 @@ define nifi::config_properties (
   assert_type(Hash[String,Scalar], $properties)
   if ! empty($properties) {
     $changes = $properties.map |String $key, Scalar $value| {
-      "set ${key} ${value}"
+      "set ${key} '${value}'"
     }
     notify{"changes ${title}":
         message => $changes

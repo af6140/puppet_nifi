@@ -57,6 +57,4 @@ class nifi (
   class { '::nifi::config': } ~>
   class { '::nifi::service': } ->
   Class['::nifi']
-
-  Ini_setting<| |> ~> Service['nifi']
 }

@@ -1,5 +1,5 @@
 <cluster-provider>
-  <identifier><%= @identifier %></identifier>
+  <id><%= @identifier %></id>
   <class><%= @provider_class %></class>
   <% @normalized_cluster_provider_properties.map do |key, value| -%>
       <property name="<%= key %>"><%= value %></property>

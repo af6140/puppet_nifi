@@ -22,6 +22,9 @@ describe 'nifi' do
             :config_ssl => false,
             :cluster_members => %w(nifi-as01a.dev nifi-as02a.dev nif-as03a.dev),
             :id_mappings => id_mappings,
+            :nifi_properties => {
+              '###nif_test_property###' => 'here'
+            }
           }
         }
 
@@ -115,7 +118,7 @@ describe 'nifi' do
             :cacert_path => '/etc/pki/certs/ca.pem',
             :node_cert_path => '/etc/pki/certs/node.pem',
             :node_private_key_path => '/etc/pki/keys/node_key.pem',
-            :initial_admin_identity => 'cn=admin',
+            :initial_admin_identity => 'nifi-admin',
             :initial_admin_cert_path => '/etc/pki/certs/nifi_admin.pem',
             :initial_admin_key_path => '/etc/pki/keys/nifi_amdin.key',
             :keystore_password => 'changeit',
@@ -155,7 +158,7 @@ describe 'nifi' do
             :cacert_path => '/etc/pki/certs/ca.pem',
             :node_cert_path => '/etc/pki/certs/node.pem',
             :node_private_key_path => '/etc/pki/keys/node_key.pem',
-            :initial_admin_identity => 'cn=admin',
+            :initial_admin_identity => 'nifi-admin',
             :initial_admin_cert_path => '/etc/pki/certs/nifi_admin.pem',
             :initial_admin_key_path => '/etc/pki/keys/nifi_amdin.key',
             :keystore_password => 'changeit',

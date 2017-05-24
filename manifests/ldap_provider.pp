@@ -58,12 +58,9 @@ define nifi::ldap_provider (
     content => template('nifi/idmapping/frag_ldap_provider.erb')
   }
 
-  ini_setting { "nifi_settings_login_identity_provider":
-    ensure => present,
-    path   => "${::nifi::nifi_conf_dir}/nifi.properties",
-    section_prefix => '',
-    section_suffix => '',
-    setting => 'nifi.security.user.login.identity.provider',
-    value => $identifier,
+  nifi::config_properties {'nifi_properties_ldap_provider':
+    properties => {
+      'nifi.security.user.login.identity.provider' => $identifier
+    }
   }
 }

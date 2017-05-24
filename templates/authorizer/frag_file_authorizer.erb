@@ -1,7 +1,7 @@
-<provider>
+<authorizor>
   <identifier><%= @identifier %></identifier>
   <class><%= @provider_class %></class>
   <% @normalized_file_authorizer_properties.map do |key, value| -%>
       <property name="<%= key %>"><%= value %></property>
   <% end -%>
-</provider>
+</authorizor>

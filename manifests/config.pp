@@ -39,6 +39,7 @@ class nifi::config(
     owner => 'nifi',
     group => 'nifi',
     mode => '0644',
+    ensure_newline => true,
   }
   concat::fragment{ 'id_provider_start':
     order => '01',
@@ -93,6 +94,7 @@ class nifi::config(
     owner => 'nifi',
     group => 'nifi',
     mode => '0644',
+    ensure_newline => true,
   }
   concat::fragment{ 'state_provider_start':
     order => '01',
@@ -191,6 +193,7 @@ class nifi::config(
     owner => 'nifi',
     group => 'nifi',
     mode => '0644',
+    ensure_newline => true,
   }
   concat::fragment{ 'authorizers_start':
     order => '01',

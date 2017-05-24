@@ -38,6 +38,8 @@ class nifi (
 ) inherits ::nifi::params {
 
 
+  notify{"initial admin identity: ${initial_admin_identity}":}
+
   if($config_cluster) {
     $count_of_nodes = size($cluster_members)
     $count_of_identities = size($cluster_identities)

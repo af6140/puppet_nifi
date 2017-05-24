@@ -44,7 +44,7 @@ class nifi::config(
   concat::fragment{ 'id_provider_start':
     order => '01',
     target => '/opt/nifi/conf/login-identity-providers.xml',
-    content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<loginIdentityProviders>\n"
+    content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<!--\nThis file is managed by Puppet. DO NOT EDIT\n-->\n<loginIdentityProviders>\n"
   }
 
   concat::fragment{ 'id_provider_end':
@@ -99,7 +99,7 @@ class nifi::config(
   concat::fragment{ 'state_provider_start':
     order => '01',
     target => '/opt/nifi/conf/state-management.xml',
-    content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<stateManagement>\n"
+    content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<!--\nThis file is managed by Puppet. DO NOT EDIT\n-->\n<stateManagement>\n"
   }
 
   concat::fragment{ 'state_provider_end':
@@ -198,7 +198,7 @@ class nifi::config(
   concat::fragment{ 'authorizers_start':
     order => '01',
     target => '/opt/nifi/conf/authorizers.xml',
-    content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<authorizers>"
+    content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<!--\nThis file is managed by Puppet. DO NOT EDIT\n-->\n<authorizers>"
   }
 
   concat::fragment{ 'authorizers_end':

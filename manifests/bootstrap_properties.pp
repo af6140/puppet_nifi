@@ -6,7 +6,7 @@ define nifi::bootstrap_properties (
 
   if ! empty($properties) {
     $changes = $properties.map |String $key, Scalar $value| {
-      "set ${key} ${value}"
+      "set ${key} '${value}'"
     }
 
     augeas {"update-nifi-bootstrap-${title}":

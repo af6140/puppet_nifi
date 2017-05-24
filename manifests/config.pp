@@ -35,7 +35,7 @@ class nifi::config(
   # login provider configuration
   concat {'/opt/nifi/conf/login-identity-providers.xml':
     ensure => 'present',
-    warn => true,
+    warn => false,
     owner => 'nifi',
     group => 'nifi',
     mode => '0644',
@@ -90,7 +90,7 @@ class nifi::config(
   #manage state-management-xml
   concat {'/opt/nifi/conf/state-management.xml':
     ensure => 'present',
-    warn => true,
+    warn => false,
     owner => 'nifi',
     group => 'nifi',
     mode => '0644',
@@ -189,7 +189,7 @@ class nifi::config(
   #manage authorizer
   concat {'/opt/nifi/conf/authorizers.xml':
     ensure => 'present',
-    warn => true,
+    warn => false,
     owner => 'nifi',
     group => 'nifi',
     mode => '0644',

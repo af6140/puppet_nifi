@@ -1,7 +1,7 @@
-<provider>
+<local-provider>
   <identifier><%= @identifier %></identifier>
   <class><%= @provider_class %></class>
   <% @normalized_local_provider_properties.map do |key, value| -%>
       <property name="<%= key %>"><%= value %></property>
   <% end -%>
-</provider>
+</local-provider>

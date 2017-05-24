@@ -114,7 +114,8 @@ class nifi::config(
 
   if $nifi::config_cluster and ! empty($::nifi::cluster_members) {
     nifi::embedded_zookeeper { "nifi_zookeeper_config":
-      members => $nifi::cluster_members
+      members => $nifi::cluster_members,
+      ids => $nifi::cluster_zookeeper_ids,
     }
 
     $zookeeper_connect_string = join(suffix($nifi::cluster_members, ':2181'), ',')

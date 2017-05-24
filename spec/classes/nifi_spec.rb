@@ -19,6 +19,7 @@ describe 'nifi' do
         let(:params) {
           {
             :config_cluster => false,
+            :config_ssl => false,
             :cluster_members => %w(nifi-as01a.dev nifi-as02a.dev nif-as03a.dev),
             :id_mappings => id_mappings,
           }
@@ -65,6 +66,7 @@ describe 'nifi' do
         let(:params) {
           {
             :config_cluster => false,
+            :config_ssl => false,
             :ldap_provider_configs => {
               'manager_DN' => 'cn=nifibinding, ou=it, cn=example, cn=com'
             }

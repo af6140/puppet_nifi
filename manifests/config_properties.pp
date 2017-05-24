@@ -1,9 +1,11 @@
 define nifi::config_properties (
-  $path = "${nifi::nifi_conf_dir}/nifi.properties",
+  $conf_dir = $::nifi::nifi_conf_dir,
   $properties = {}
 ){
   #notify {"$properties": }
   assert_type(Hash[String,Scalar], $properties)
+  $path = "${conf_dir}/nifi.properties"
+
   if ! empty($properties) {
     $changes = $properties.map |String $key, Scalar $value| {
       "set ${key} '${value}'"

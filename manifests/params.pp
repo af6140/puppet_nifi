@@ -16,6 +16,7 @@ class nifi::params {
       fail("${::operatingsystem} not supported")
     }
   }
+  $initial_admin_identity = 'nifi-admin'
   $nifi_properties ={
     'nifi.flow.configuration.file' => '/opt/nifi/flow/flow.xml.gz',
     'nifi.templates.directory'=> '/opt/nifi/flow/templates',

@@ -35,8 +35,9 @@ class nifi (
   String[6] $keystore_password = 'changeit',
   Optional[String[6]] $key_password = undef,
   Boolean $client_auth = false,
-  $custom_properties_file = $::nifi::params::custom_properties_file,
+  Optional[String[1]] $custom_properties_file = $::nifi::params::custom_properties_file,
   Optional[Hash[String[1],String[1]]] $custom_properties = undef,
+  Optional[Integer[2,99]] $flow_election_max_candidates = $::nifi::params::flow_election_max_candidates
 ) inherits ::nifi::params {
 
 

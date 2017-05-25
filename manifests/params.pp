@@ -29,5 +29,6 @@ class nifi::params {
     'nifi.security.user.authorizer' => 'file-provider',
     'nifi.cluster.is.node' => 'false',
   }
+  $flow_election_max_candidates = 2
 
 }

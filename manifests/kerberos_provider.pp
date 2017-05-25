@@ -21,7 +21,6 @@ define nifi::kerberos_provider (
       }else {
         $cap_key_spec = capitalize($key_spec)
       }
-      #notify {"${key}: ${$cap_key_spec}":}
       $cap_key_spec
     }
 
@@ -33,7 +32,6 @@ define nifi::kerberos_provider (
 
   $normalized_kerberos_provider_properties = hash($flat_tmp)
 
-  #notify {"$normalized_kerberos_provider_properties":}
 
   concat::fragment { "frag_${identifier}":
     order   => '03',

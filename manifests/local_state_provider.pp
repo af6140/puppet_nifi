@@ -26,7 +26,6 @@ define nifi::local_state_provider (
       }else {
         $cap_key_spec = capitalize($key_spec)
       }
-      #notify {"${key}: ${$cap_key_spec}":}
       $cap_key_spec
     }
 

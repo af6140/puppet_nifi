@@ -39,7 +39,6 @@ define nifi::ldap_provider (
       }else {
         $cap_key_spec = capitalize($key_spec)
       }
-      #notify {"${key}: ${$cap_key_spec}":}
       $cap_key_spec
     }
 
@@ -50,8 +49,6 @@ define nifi::ldap_provider (
   $flat_tmp = flatten($tmp)
 
   $normalized_ldap_provider_properties = hash($flat_tmp)
-
-  #notify {"$normalized_ldap_provider_properties":}
 
   concat::fragment { "frag_${identifier}":
     order   => '02',

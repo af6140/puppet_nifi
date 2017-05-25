@@ -14,10 +14,6 @@ class nifi::config(
     noop=> true
   }
 
-  #assert_type(Pattern[/(\d)+\.(\d)+\.(\d)+/] ,$nifi_cal_version)
-
-
-
   ##bootstrap jvm customization
   #config jvm size
 
@@ -163,7 +159,6 @@ class nifi::config(
       ["node_identity_${real_index}", $node_identity]
     }
 
-    #notify {"$cluster_dns":}
     $cluster_ids_hash = hash(flatten($cluster_dns))
 
   }else {
@@ -193,7 +188,6 @@ class nifi::config(
 
   $active_properties = deep_merge($::nifi::params::nifi_properties, $normaized_config_properties, $nifi_cluster_configs)
 
-  #notify {"$active_properties": }
   nifi::config_properties {'nifi_general_configs':
     properties => $active_properties
   }

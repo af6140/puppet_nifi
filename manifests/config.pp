@@ -133,6 +133,11 @@ class nifi::config(
       $real_zookeeper_connect_string = $zookeeper_connect_string
     }
 
+    if $::nifi::flow_election_max_candidates and $::nifi::flow_election_max_candidates >=2 {
+      $max_candidates = $::nifi::flow_election_max_candidates
+    }else {
+      $max_candidates = 2
+    }
     $nifi_cluster_configs = {
       'nifi.cluster.is.node' => 'true',
       'nifi.cluster.node.address' => $::fqdn,
@@ -141,7 +146,9 @@ class nifi::config(
       'nifi.zookeeper.connect.string' => $real_zookeeper_connect_string,
       'nifi.state.management.embedded.zookeeper.start' => 'true',
       'nifi.remote.input.host' => $::fqdn,
-      'nifi.remote.input.socket.port' => '9998'
+      'nifi.remote.input.socket.port' => '9998',
+      'nifi.cluster.flow.election.max.candidates' => $max_candidates,
+      'nifi.cluster.flow.election.max.wait.time' => '3 mins',
     }
 
     #need set cluster memeber node identity in authorizers.xml

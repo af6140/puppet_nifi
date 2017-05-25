@@ -20,5 +20,11 @@ class nifi::install {
     owner => 'nifi',
     group => 'nifi',
     mode => '0755',
+  } ->
+  file {'/var/run/nifi':
+    ensure => 'directory',
+    owner => 'nifi',
+    group => 'nifi',
+    mode => '0755'
   }
 }

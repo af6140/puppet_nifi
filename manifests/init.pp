@@ -14,8 +14,8 @@ class nifi (
   String[1] $package_name = $::nifi::params::package_name,
   $service_name = $::nifi::params::service_name,
   $package_version = $::nifi::params::package_version,
-  $nifi_home = $::nifi::params::nifi_home,
-  $nifi_conf_dir = $::nifi::params::nifi_conf_dir,
+  String[1] $nifi_home = $::nifi::params::nifi_home,
+  String[1] $nifi_conf_dir = $::nifi::params::nifi_conf_dir,
   Optional[Hash[String[1],String[1]]] $nifi_properties = {},
   $min_heap = '512m',
   $max_heap = '512m',
@@ -27,17 +27,19 @@ class nifi (
   Optional[Array[Struct[{pattern => String[1], value=>String[1], ensure => Optional[Enum[present,absent]], index => Optional[Integer[0,9]] }],0,9]] $id_mappings = undef,
   Boolean $config_ssl=true,
   Optional[String[1]] $initial_admin_identity = $::nifi::params::initial_admin_identity,
-  $cacert_path = undef,
-  $node_cert_path = undef,
-  $node_private_key_path = undef,
-  $initial_admin_cert_path = undef,
-  $initial_admin_key_path = undef,
+  Optional[String[1]] $cacert_path = undef,
+  Optional[String[1]] $node_cert_path = undef,
+  Optional[String[1]] $node_private_key_path = undef,
+  Optional[String[1]] $initial_admin_cert_path = undef,
+  Optional[String[1]] $initial_admin_key_path = undef,
   String[6] $keystore_password = 'changeit',
   Optional[String[6]] $key_password = undef,
   Boolean $client_auth = false,
   Optional[String[1]] $custom_properties_file = $::nifi::params::custom_properties_file,
   Optional[Hash[String[1],String[1]]] $custom_properties = undef,
-  Optional[Integer[2,99]] $flow_election_max_candidates = $::nifi::params::flow_election_max_candidates
+  Optional[Integer[2,99]] $flow_election_max_candidates = $::nifi::params::flow_election_max_candidates,
+  Integer[1024] $web_http_port = $::nifi::params::web_http_port,
+  Integer[1024] $web_https_port = $::nifi::params::web_https_port,
 ) inherits ::nifi::params {
 
 
@@ -53,8 +55,8 @@ class nifi (
       fail("Count of nodes does not match count of node identities")
     }
 
-    if ! $config_ssl {
-      fail("when configuring cluster, ssl must be configured, since node use cert for identity")
+    if ! $config_ssl  {
+      fail("when configuring secure cluster, ssl must be configured, since node use cert for identity")
     }
   }
 

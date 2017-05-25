@@ -113,6 +113,7 @@ class nifi::config(
   }
 
   if $nifi::config_cluster and ! empty($::nifi::cluster_members) {
+    $real_config_cluster = true
     nifi::embedded_zookeeper { "nifi_zookeeper_config":
       members => $nifi::cluster_members,
       ids => $nifi::cluster_zookeeper_ids,
@@ -164,6 +165,7 @@ class nifi::config(
 
   }else {
     #disable cluster start
+    $real_config_cluster = false
     $nifi_cluster_configs = {
       'nifi.cluster.is.node' => 'false',
       'nifi.zookeeper.connect.string' => '',
@@ -213,8 +215,8 @@ class nifi::config(
     content => "\n</authorizers>"
   }
 
+  #ssl
   if $::nifi::config_ssl{
-
     if ! $::nifi::initial_admin_identity or empty($::nifi::initial_admin_identity) {
       fail("When setup secure nifi instance, initial admin identity is required")
     }
@@ -237,11 +239,20 @@ class nifi::config(
       initial_admin_key_path  => $::nifi::initial_admin_key_path,
       keystore_password  => $::nifi::keystore_password,
       key_password       => $::nifi::key_password,
-      client_auth        => $::nifi::client_auth,
+      config_cluster => $real_config_cluster,
+      client_auth => $::nifi::client_auth
     }
   }else {
+    #no ssl, no authorization, no security
     #default file authorizer
     nifi::file_authorizer { 'nifi_file_authorizer':
+    }
+
+    #configure default security, no ssl, no initial admin no client auth
+    #no cluster communication authentication/security
+    nifi::security { 'nifi_properties_security_setting':
+      config_cluster => $real_config_cluster,
+      client_auth => false,
     }
   }
 

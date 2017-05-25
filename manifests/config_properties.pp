@@ -10,8 +10,8 @@ define nifi::config_properties (
     $changes = $properties.map |String $key, Scalar $value| {
       "set ${key} '${value}'"
     }
-    notify{"changes ${title}: $changes":
-        message => ''
+    notify{"changes ${title}:":
+        message => $changes
     }
     augeas {"update-nifi-properties-${title}":
       lens => 'Properties.lns',

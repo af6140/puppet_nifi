@@ -44,7 +44,7 @@ class nifi (
 
 
   notify{"initial admin identity: ${initial_admin_identity}":
-    message => ''
+    message => "${initial_admin_identity}"
   }
 
   if($config_cluster) {

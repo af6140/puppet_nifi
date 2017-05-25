@@ -54,7 +54,8 @@ define nifi::security(
       $cluster_protocol_secure = false
     }
     notify{'ssl security configured':
-      message => "client auth enabled =${client_auth},  cluster config enabled = ${config_cluster}, cluster secure protocol=${cluster_protocol_secure}, web https disabled, http enabled"
+      message => "client auth enabled =${client_auth},  cluster config enabled = ${config_cluster}, cluster secure protocol=${cluster_protocol_secure}, web https disabled, http enabled",
+      noop=>true
     }
     #disable http port
     $security_properties = {
@@ -76,7 +77,8 @@ define nifi::security(
     }
   }else {
     notify{'no ssl security configured':
-      message => 'client auth disabled for cluster communication, cluster protocol is not secure, web https disabled, http enabled'
+      message => 'client auth disabled for cluster communication, cluster protocol is not secure, web https disabled, http enabled',
+      noop => true,
     }
     $security_properties = {
       'nifi.security.keystore'          => '',

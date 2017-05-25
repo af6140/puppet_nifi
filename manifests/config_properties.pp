@@ -11,7 +11,8 @@ define nifi::config_properties (
       "set ${key} '${value}'"
     }
     notify{"changes ${title}:":
-        message => $changes
+      message => $changes,
+      noop=>true
     }
     augeas {"update-nifi-properties-${title}":
       lens => 'Properties.lns',

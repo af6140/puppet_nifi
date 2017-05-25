@@ -9,7 +9,10 @@ class nifi::config(
   $pkg_version_specs = split($nifi::package_version, "-")
   $nifi_cal_version = $pkg_version_specs[0]
 
-  notify {"version :${nifi_cal_version}": message => ''}
+  notify {"nifi package version :${nifi_cal_version}":
+    message => '',
+    noop=> true
+  }
 
   #assert_type(Pattern[/(\d)+\.(\d)+\.(\d)+/] ,$nifi_cal_version)
 

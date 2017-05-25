@@ -24,8 +24,6 @@ class nifi::params {
     'nifi.flow.configuration.file' => '/opt/nifi/flow/flow.xml.gz',
     'nifi.templates.directory'=> '/opt/nifi/flow/templates',
     'nifi.variable.registry.properties' => '/opt/nifi/flow/custom.properties',
-    'nifi.web.http.port' => "${web_http_port}",
-    'nifi.web.https.port' => "${web_https_port}",
     'nifi.web.http.host' => $::fqdn,
     'nifi.web.https.host' => $::fqdn,
     'nifi.security.user.authorizer' => 'file-provider',

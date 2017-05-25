@@ -47,7 +47,6 @@ define nifi::security(
     'nifi.security.truststorePasswd' => $keystore_password,
     'nifi.security.truststoreType' => 'jks',
     'nifi.security.needClientAuth' => $client_auth,
-    'nifi.web.http.port' => '',
     'nifi.remote.input.secure' => 'true',
   }
   nifi::config_properties {'nifi_security_props':

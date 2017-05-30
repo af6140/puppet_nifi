@@ -253,7 +253,6 @@ class nifi::config(
     }
   }
 
-
   nifi::custom_properties{'nifi_custom_properties':
 
   }

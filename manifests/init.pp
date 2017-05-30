@@ -65,4 +65,14 @@ class nifi (
   class { '::nifi::config': } ~>
   class { '::nifi::service': } ->
   Class['::nifi']
+
+
+  file {"${::nifi::nifi_conf_dir}/logback.xml":
+    ensure => 'present',
+    mode => '644',
+    owner => 'nifi',
+    group => 'nifi',
+    content => template('nifi/logback.xml.erb'),
+    require => Package['nifi'],
+  }
 }

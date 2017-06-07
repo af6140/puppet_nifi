@@ -1,7 +1,5 @@
-Puppet::Type.type(:nifi_user).provide(:curl) do
+Puppet::Type.type(:nifi_group).provide(:curl) do
   require 'json'
-  require 'erb'
-
   #check curl command exists
   confine :true => begin
     system("curl -V")
@@ -10,16 +8,16 @@ Puppet::Type.type(:nifi_user).provide(:curl) do
   initvars
 
   commands :curl => 'curl'
-  #commands :java  => 'java'
+
   mk_resource_methods
 
 
   def exists?
-      existing_user = get_user(@resource[:name])
-      ! existing_user.nil?
+    existing_user = get_group(@resource[:name])
+    ! existing_user.nil?
   end
 
-  def get_user(identity)
+  def get_group(identity)
     #ver=java('-version')
     #puts("java version: #{ver}")
     #curl -X GET api_url/tenants/search-result?q=user -H 'cache-control: no-cache'
@@ -50,15 +48,15 @@ Puppet::Type.type(:nifi_user).provide(:curl) do
     search_response = curl(search_command)
     #puts "search response = #{search_response}"
     response_json = JSON.parse(search_response)
-    found_user = response_json['users'].select do | user |
+    found_group = response_json['userGroups'].select do | group|
       #puts user.to_json
-      user['component']['identity'] == identity
+      group['component']['identity'] == identity
     end
-    #puts("found user #{found_user}")
-    found_user[0]
+
+    found_group[0]
   end
 
-  def create_user
+  def create_group
     #Example post
     # {
     #   "revision": {
@@ -116,22 +114,23 @@ Puppet::Type.type(:nifi_user).provide(:curl) do
           "parentGroupId": null,
           "identity": "#{username}",
           "userGroups": [],
+          "users": [],
           "accessPolicies": []
         }
       }
     }
     #puts "request_json :#{req_json}"
-    curl(['-k', '-X', 'POST', '--cert', resource[:auth_cert_path], '--key', @resource[:auth_cert_key_path], "#{@resource[:api_url]}/tenants/users"])
+    curl(['-k', '-X', 'POST', '--cert', resource[:auth_cert_path], '--key', @resource[:auth_cert_key_path], "#{@resource[:api_url]}/tenants/user-groups"])
   end
 
 
-  def delete_user
-    exisiting_user = get_user(@resource[:name])
-    if ! exisiting_user.nil?
-      user_id = exisiting_user['id']
-      delete_request_url= "#{@resource[:api_url]}/tenants/users/#{user_id}"
+  def delete_group
+    exisiting_group = get_group(@resource[:name])
+    if ! exisiting_group.nil?
+      user_id = exisiting_group['id']
+      delete_request_url= "#{@resource[:api_url]}/tenants/user-groups/#{user_id}"
       delete_response= curl(['-k', '-X', 'DELETE', '--cert', @resource[:auth_cert_path], '--key', @resource[:auth_cert_key_path], delete_request_url])
-      #puts "Delete user response: #{delete_response}"
+      #puts "Delete gruop response: #{delete_response}"
       if delete_response
         response_json = JSON.parse(delete_response)
         response_code = response_json['status']
@@ -141,13 +140,13 @@ Puppet::Type.type(:nifi_user).provide(:curl) do
   end
 
   def create
-    create_user
+    create_group
     @property_hash[:ensure] = :present
     exists? ? (return true) : (return false)
   end
 
   def destroy
-    delete_user
+    delete_group
     @property_hash.clear
     still_there = exists?
     still_there ? (return false) :(return true)

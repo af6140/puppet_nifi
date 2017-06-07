@@ -16,7 +16,6 @@ Puppet::Type.type(:nifi_user).provide(:curl) do
 
   def exists?
       existing_user = get_user(@resource[:name])
-      puts ("Existing nil = #{existing_user.nil?}")
       ! existing_user.nil?
   end
 
@@ -133,13 +132,15 @@ Puppet::Type.type(:nifi_user).provide(:curl) do
       delete_request_url= "#{@resource[:api_url]}/tenants/users/#{user_id}"
       delete_response= curl(['-k', '-X', 'DELETE', '--cert', @resource[:auth_cert_path], '--key', @resource[:auth_cert_key_path], delete_request_url])
       #puts "Delete user response: #{delete_response}"
-      #response_json = JSON.parse(delete_response)
-      #response_code = response_json['status']
+      if delete_response
+        response_json = JSON.parse(delete_response)
+        response_code = response_json['status']
+        puts "Delete response code : #{response_code}"
+      end
     end
   end
 
   def create
-    puts "Create ################"
     create_user
     @property_hash[:ensure] = :present
     exists? ? (return true) : (return false)
@@ -149,7 +150,6 @@ Puppet::Type.type(:nifi_user).provide(:curl) do
     delete_user
     @property_hash.clear
     still_there = exists?
-    puts("still here?= #{still_there}")
     still_there ? (return false) :(return true)
   end
 end

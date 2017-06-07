@@ -17,18 +17,6 @@ describe  provider_class do
         end
       end
 
-      # describe 'instances' do
-      #   it 'should have an instance method' do
-      #     expect(described_class).to respond_to :instances
-      #   end
-      # end
-      #
-      # describe 'prefetch' do
-      #   it 'should have a prefetch method' do
-      #     expect(described_class).to respond_to :prefetch
-      #   end
-      # end
-
       context 'create user' do
         let(:resource) {
           Puppet::Type.type(:nifi_user).new({
@@ -45,7 +33,6 @@ describe  provider_class do
         }
         before :each do
           #puts provider.pretty_inspect
-          puts ("###############Stub request")
           provider.stubs(:curl).with(
             ['-k', '-X', 'GET', '--cert', '/tmp/auth_cert.pem', '--key', '/tmp/auth.key', 'https://datafeed-nf02a.dev.co.entpub.net:8443/nifi-api/tenants/search-results?q=test']
           ).returns('
@@ -87,7 +74,6 @@ describe  provider_class do
 
 
       context 'delete user' do
-        puts "###################contextdelete"
         let(:resource) {
           Puppet::Type.type(:nifi_user).new({
                                               :ensure=>'present',

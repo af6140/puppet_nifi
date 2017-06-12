@@ -184,9 +184,14 @@ class nifi::config(
     [$prop_key, $value]
   }
 
+  $tmp_provenance_properties = {
+    'nifi.provenance.repository.max.storage.time'=> $nifi::provenance_storage_time,
+    'nifi.provenance.repository.max.storage.size' => $nifi::provenance_storage_size,
+  }
+
   $normaized_config_properties = hash(flatten($tmp_config_properties))
 
-  $active_properties = deep_merge($::nifi::params::nifi_properties, $normaized_config_properties, $nifi_cluster_configs)
+  $active_properties = deep_merge($::nifi::params::nifi_properties, $tmp_provenance_properties,  $normaized_config_properties, $nifi_cluster_configs)
 
   nifi::config_properties {'nifi_general_configs':
     properties => $active_properties

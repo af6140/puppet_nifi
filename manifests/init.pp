@@ -40,6 +40,8 @@ class nifi (
   Optional[Integer[2,99]] $flow_election_max_candidates = $::nifi::params::flow_election_max_candidates,
   Integer[1024] $web_http_port = $::nifi::params::web_http_port,
   Integer[1024] $web_https_port = $::nifi::params::web_https_port,
+  String[1] $provenance_storage_time = "24 hours",
+  String[1] $provenance_storage_size = "1 GB",
 ) inherits ::nifi::params {
 
 

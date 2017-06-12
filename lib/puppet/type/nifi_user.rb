@@ -1,3 +1,4 @@
+require 'pathname'
 Puppet::Type.newtype(:nifi_user) do
   @doc = %q{Create a new user in nifi
     Example:
@@ -34,6 +35,13 @@ Puppet::Type.newtype(:nifi_user) do
               "api_url must use https"
       end
     end
+  end
+
+  newparam(:conf_dir) do
+    desc "The configuration dir or nifi, for users"
+      validate do |vaule|
+          Pathname.directory?(value)
+      end
   end
 
 end

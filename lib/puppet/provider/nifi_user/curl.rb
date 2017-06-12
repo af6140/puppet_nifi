@@ -1,18 +1,8 @@
-Puppet::Type.type(:nifi_user).provide(:curl) do
-  require 'json'
-  require 'erb'
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'nifi'))
 
-  #check curl command exists
-  confine :true => begin
-    system("curl -V")
-  end
+Puppet::Type.type(:nifi_user).provide(:curl, :parent=> Puppet::Provider::Nifi ) do
 
-  initvars
-
-  commands :curl => 'curl'
-  #commands :java  => 'java'
   mk_resource_methods
-
 
   def exists?
       existing_user = get_user(@resource[:name])

@@ -1,13 +1,6 @@
-Puppet::Type.type(:nifi_group).provide(:curl) do
-  require 'json'
-  #check curl command exists
-  confine :true => begin
-    system("curl -V")
-  end
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'nifi'))
 
-  initvars
-
-  commands :curl => 'curl'
+Puppet::Type.type(:nifi_group).provide(:curl, :parent=> Puppet::Provider::Nifi ) do
 
   mk_resource_methods
 

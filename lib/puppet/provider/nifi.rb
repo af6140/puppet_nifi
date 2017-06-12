@@ -11,4 +11,10 @@ class Puppet::Provider::Nifi < Puppet::Provider
   commands :curl => 'curl'
   #mk_resource_methods
 
+
+  #default nothing returned
+  def self.instances
+    []
+  end
+
 end

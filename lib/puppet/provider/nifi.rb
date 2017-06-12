@@ -9,6 +9,7 @@ class Puppet::Provider::Nifi < Puppet::Provider
   initvars
 
   commands :curl => 'curl'
+  commands :cat => 'cat'
   #mk_resource_methods
 
 

@@ -142,4 +142,5 @@ Puppet::Type.type(:nifi_user).provide(:curl, :parent=> Puppet::Provider::Nifi ) 
     still_there = exists?
     still_there ? (return false) :(return true)
   end
+
 end

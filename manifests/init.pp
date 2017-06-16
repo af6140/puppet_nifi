@@ -12,10 +12,12 @@
 #
 class nifi (
   String[1] $package_name = $::nifi::params::package_name,
-  $service_name = $::nifi::params::service_name,
-  $package_version = $::nifi::params::package_version,
+  String[1] $service_name = $::nifi::params::service_name,
+  String[1] $package_version = $::nifi::params::package_version,
   String[1] $nifi_home = $::nifi::params::nifi_home,
   String[1] $nifi_conf_dir = $::nifi::params::nifi_conf_dir,
+  String[1] $nifi_flow_dir = $::nifi::params::nifi_flow_dir,
+  String[1] $nifi_work_dir = $::nifi::params::nifi_work_dir,
   Optional[Hash[String[1],String[1]]] $nifi_properties = {},
   $min_heap = '512m',
   $max_heap = '512m',
@@ -41,7 +43,7 @@ class nifi (
   Integer[1024] $web_http_port = $::nifi::params::web_http_port,
   Integer[1024] $web_https_port = $::nifi::params::web_https_port,
   String[1] $provenance_storage_time = "24 hours",
-  String[1] $provenance_storage_size = "1 GB",
+  String[1] $provenance_storage_size = "1 GB"
 ) inherits ::nifi::params {
 
 
@@ -76,5 +78,33 @@ class nifi (
     group => 'nifi',
     content => template('nifi/logback.xml.erb'),
     require => Package['nifi'],
+  }
+
+  #static configuration facts
+  file {'/etc/fact/facts.d/nifi.txt':
+    ensure => 'present',
+    owner => 'root',
+    group => 'root',
+    mode => '0644'
+  } ->
+  nifi::extfact{'nifi_home':
+    key => 'nifi_home',
+    value => $::nifi::nifi_home
+  }->
+  nifi::extfact{'nifi_conf_dir':
+    key => 'nifi_conf_dir',
+    value => $::nifi::nifi_conf_dir
+  }->
+  nifi::extfact{'nifi_flow_dir':
+    key => 'nifi_flow_dir',
+    value => $::nifi::nifi_flow_dir
+  }->
+  nifi::extfact{'nifi_initial_admin_cert':
+    key => 'nifi_initial_admin_cert_path',
+    value => $::nifi::initial_admin_cert_path
+  }->
+  nifi::extfact{'nifi_initial_admin_key':
+    key => 'nifi_initial_admin_key_path',
+    value => $::nifi::initial_admin_key_path
   }
 }

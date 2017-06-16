@@ -5,11 +5,12 @@ include RspecPuppetFacts
 
 
 fixture_path = File.expand_path(File.join(__FILE__, '..', 'fixtures'))
-
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + '/../'))
 
 #enable hiera lookup that used in puppet module itself
 RSpec.configure do |c|
   c.hiera_config = "#{fixture_path}/hiera/hiera.yaml"
+  #c.mock_with :rspec
 end
 
 

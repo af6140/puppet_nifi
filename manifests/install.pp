@@ -15,7 +15,14 @@ class nifi::install {
   package { $::nifi::package_name:
     ensure => $::nifi::package_version
   }
-  file {'/opt/nifi/flow':
+  file {$::nifi::nifi_work_dir:
+    ensure => 'directory',
+    owner => 'nifi',
+    group => 'nifi',
+    mode => '0755',
+    require => [Package[$::nifi::package_name], User['nifi']]
+  }
+  file {$::nifi::nifi_flow_dir:
     ensure => 'directory',
     owner => 'nifi',
     group => 'nifi',

@@ -191,7 +191,24 @@ class nifi::config(
 
   $normaized_config_properties = hash(flatten($tmp_config_properties))
 
-  $active_properties = deep_merge($::nifi::params::nifi_properties, $tmp_provenance_properties,  $normaized_config_properties, $nifi_cluster_configs)
+
+  #directories location
+
+  $file_location_properties = {
+    'nifi.flow.configuration.file' => "${::nifi::nifi_flow_dir}/flow.xml.gz",
+    'nifi.templates.directory'=> "${::nifi::nifi_flow_dir}/templates",
+    'nifi.variable.registry.properties' => "${::nifi::nifi_flow_dir}/custom.properties",
+    'nifi.flow.configuration.archive.dir' => "${::nifi::nifi_conf_dir}/archive/",
+    'nifi.authorizer.configuration.file' => "${::nifi::nifi_conf_dir}/authorizers.xml",
+    'nifi.login.identity.provider.configuration.file ' => "${::nifi::nifi_conf_dir}/login-identity-providers.xml",
+    'nifi.state.management.configuration.file' => "${::nifi::nifi_conf_dir}/state-management.xml",
+    'nifi.state.management.embedded.zookeeper.properties' => "${::nifi::nifi_conf_dir}/zookeeper.properties",
+    'nifi.nar.working.directory' => "${::nifi::nifi_work_dir}/nar/",
+    'nifi.documentation.working.directory' => "${::nifi::nifi_work_dir}/docs/components",
+    'nifi.web.jetty.working.directory' => "${::nifi::nifi_work_dir}/jetty"
+  }
+
+  $active_properties = deep_merge($::nifi::params::nifi_properties, $tmp_provenance_properties,  $normaized_config_properties, $file_location_properties, $nifi_cluster_configs)
 
   nifi::config_properties {'nifi_general_configs':
     properties => $active_properties

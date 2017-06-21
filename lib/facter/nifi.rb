@@ -1,7 +1,33 @@
 require 'facter'
 require 'json'
 
+require "net/https"
+require "uri"
+
+
+
 module Nifi
+  module Http
+    def self.get_http(uri, cert_path, key_path)
+      begin
+        uri = URI.parse(uri)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        cert_raw = File.read(cert_path)
+        #puts cert_raw
+        http.cert = OpenSSL::X509::Certificate.new(cert_raw)
+        key_raw = File.read(key_path)
+        http.key = OpenSSL::PKey::RSA.new(key_raw)
+        http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+        return http
+      rescue Exception => e
+        puts e.message
+        puts e.backtrace.inspect
+        return nil
+      end
+    end
+  end
+
   module Facts
     def self.add_facts
       Facter.add(:nifi_https_port) do
@@ -29,12 +55,12 @@ module Nifi
         end
       end
       #
-      # Facter.add(:nifi_process_groups) do
-      #   confine :kernel => "Linux"
-      #   setcode do
-      #     Nifi::Facts::Flow.processGroups
-      #   end
-      # end
+      Facter.add(:nifi_process_groups) do
+        confine :kernel => "Linux"
+        setcode do
+          Nifi::Flow.processGroups
+        end
+      end
 
       return nil
     end
@@ -66,7 +92,7 @@ module Nifi
       cert_key = Facter.value(:nifi_initial_admin_key)
       https_host = Facter.value(:nifi_https_host)
       https_port = Facter.value(:nifi_https_port)
-      if (cert_path.nil? or cert_key.nil? or https_host.nil? or https_port.nil? )
+      if cert_path.nil? or cert_key.nil? or https_host.nil? or https_port.nil?
         return nil
       end
 
@@ -74,47 +100,53 @@ module Nifi
         return nil
       end
 
-      cmd = %Q{ curl -k --cert #{cert_path}  --key #{cert_key} -X GET  https://#{https_host}:#{https_port}/nifi-api/process-groups/root -H 'cache-control: no-cache' }
-      result = Facter::Core::Execution.exec(cmd)
+      cmd = %Q{curl -k --cert #{cert_path}  --key #{cert_key} -X GET  https://#{https_host}:#{https_port}/nifi-api/process-groups/root -H 'cache-control: no-cache'}
+      result = Facter::Util::Resolution.exec(cmd)
+
       all_pg=[]
       if ! result.nil?
         root_json = JSON.parse(result)
         root_id = root_json['id']
         data = {
-          :id => root_id,
-          :name => root_json['component']['name']
+          'id' => root_id,
+          'name' => root_json['component']['name']
         }
         all_pg.push(data)
-        others = navigatProcessGroups(root_id)
+        others = Nifi::Flow.navigatProcessGroups(root_id)
         all_pg.concat(others)
       end
       return all_pg.to_s
     end
 
     def self.navigatProcessGroups(pg_id)
-      cmd = %Q{ curl -k --cert #{cert_path}  --key #{cert_key} -X GET  https://#{https_host}:#{https_port}/nifi-api/process-groups/#{pg_id}/process-groups -H 'cache-control: no-cache' }
-      result = Facter::Core::Execution.exec(cmd)
+      cert_path = Facter.value(:nifi_initial_admin_cert)
+      cert_key = Facter.value(:nifi_initial_admin_key)
+      https_host = Facter.value(:nifi_https_host)
+      https_port = Facter.value(:nifi_https_port)
+      cmd = %Q{curl -k --cert #{cert_path}  --key #{cert_key} -X GET  https://#{https_host}:#{https_port}/nifi-api/process-groups/#{pg_id}/process-groups -H 'cache-control: no-cache'}
+      result = Facter::Util::Resolution.exec(cmd)
       all_pg=[]
       if ! result.nil?
         result_json=JSON.parse(result)
         pg_json = result_json['processGroups']
-        pg_data = pg_json.map do |pg|
+        select_pg_json = pg_json.select  {|e| e['id'] != pg_id } # get rid of itself
+        pg_data = select_pg_json.map do |pg|
           data= {
-            :id => pg['id'],
-            :name => pg['component']['name'],
-            :parent => pg['component']['parentGroupId']
+            'id' => pg['id'],
+            'name' => pg['component']['name'],
+            'parent' => pg['component']['parentGroupId']
           }
         end
         all_pg.concat(pg_data)
         pg_data.each do | next_pg |
-          next_level_data = navigatProcessGroups(next_pg['id'])
+          next_pg_id = next_pg['id']
+          next_level_data = navigatProcessGroups(next_pg_id)
           all_pg.concat(next_level_data)
         end
       end
       return all_pg
     end
     def self.rootProcessGroup
-      puts("get process group")
       cert_path = Facter.value(:nifi_initial_admin_cert)
       cert_key = Facter.value(:nifi_initial_admin_key)
       https_host = Facter.value(:nifi_https_host)
@@ -125,22 +157,45 @@ module Nifi
       end
 
       cmd = %Q{curl -k --cert #{cert_path}  --key #{cert_key} -X GET  https://#{https_host}:#{https_port}/nifi-api/process-groups/root -H 'cache-control: no-cache'}
+
+      # url = "https://#{https_host}:#{https_port}/nifi-api/process-groups/root"
+      # http = Nifi::Http.get_http(url, cert_path, cert_key)
+      # request = Net::HTTP::Get.new(url)
+      # request.add_field('cache-control', 'no-cache')
+      # response = nil
+      # begin
+      #   response = http.request(request)
+      #   result = response.body
+      #   puts response.status
+      # rescue Exception =>e
+      #   puts e.message
+      #   puts e.backtrace.inspect
+      # end
+      # if response.status == '200'
+      #   puts "parsing results"
+      #   root_json = JSON.parse(result)
+      #   puts "parsed: #{root_json}"
+      #   data = {
+      #     :id => root_json['id'],
+      #     :name => root_json['component']['name']
+      #   }
+      #   puts "data:#{data}"
+      #   return data.to_s
+      # else
+      #   puts "result is nil"
+      #   return nil
+      # end
+
       result = Facter::Util::Resolution.exec(cmd)
-      puts "result: #{result}"
-      if ! result.nil?
-        puts "parsing results"
+      if result
         root_json = JSON.parse(result)
-        puts "parsed: #{root_json}"
         data = {
-          :id => root_json['id'],
-          :name => root_json['component']['name']
+          'id' => root_json['id'],
+          'name' => root_json['component']['name']
         }
-        puts "data:#{data}"
         return data.to_s
-      else
-        puts "result is nil"
-        return nil
       end
+
     end
   end
 end

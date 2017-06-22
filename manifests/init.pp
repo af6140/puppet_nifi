@@ -81,7 +81,7 @@ class nifi (
   }
 
   #static configuration facts
-  file {'/etc/fact/facts.d/nifi.txt':
+  file {'/etc/facter/facts.d/nifi.txt':
     ensure => 'present',
     owner => 'root',
     group => 'root',

@@ -10,7 +10,7 @@ describe Puppet::Type.type(:nifi_user) do
         end
       end
       describe 'when validating attributes' do
-        [ :name, :auth_cert_path, :auth_cert_key_path ].each do |param|
+        [ :name ].each do |param|
           it "should have a #{param} parameter" do
             expect(described_class.attrtype(param)).to eq(:param)
           end

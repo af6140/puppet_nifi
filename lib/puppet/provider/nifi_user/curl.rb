@@ -35,7 +35,7 @@ Puppet::Type.type(:nifi_user).provide(:curl, :parent=> Puppet::Provider::Nifi ) 
     # }
     #
 
-    search_command = ['-k', '-X', 'GET', '--cert', @resource[:auth_cert_path], '--key', @resource[:auth_cert_key_path] , "#{@resource[:api_url]}/tenants/search-results?q=#{@resource[:name]}"]
+    search_command = ['-k', '-X', 'GET', '--cert', cert_path, '--key', key_path, "#{api_url}/tenants/search-results?q=#{@resource[:name]}"]
     puts("search command #{search_command}")
     search_response = curl(search_command)
     #puts "search response = #{search_response}"
@@ -84,7 +84,6 @@ Puppet::Type.type(:nifi_user).provide(:curl, :parent=> Puppet::Provider::Nifi ) 
     #   "accessPolicies": [{…}]
     # }
     # }
-    puts("###########create user")
     username = @resource[:name]
     req_json = %Q{
       {
@@ -111,7 +110,7 @@ Puppet::Type.type(:nifi_user).provide(:curl, :parent=> Puppet::Provider::Nifi ) 
       }
     }
     #puts "request_json :#{req_json}"
-    curl(['-k', '-X', 'POST', '--cert', resource[:auth_cert_path], '--key', @resource[:auth_cert_key_path], "#{@resource[:api_url]}/tenants/users"])
+    curl(['-k', '-X', 'POST', '--cert', cert_path, '--key', key_path, "#{api_url}/tenants/users"])
   end
 
 
@@ -119,8 +118,8 @@ Puppet::Type.type(:nifi_user).provide(:curl, :parent=> Puppet::Provider::Nifi ) 
     exisiting_user = get_user(@resource[:name])
     if ! exisiting_user.nil?
       user_id = exisiting_user['id']
-      delete_request_url= "#{@resource[:api_url]}/tenants/users/#{user_id}"
-      delete_response= curl(['-k', '-X', 'DELETE', '--cert', @resource[:auth_cert_path], '--key', @resource[:auth_cert_key_path], delete_request_url])
+      delete_request_url= "#{self.api_url}/tenants/users/#{user_id}"
+      delete_response= curl(['-k', '-X', 'DELETE', '--cert', cert_path, '--key', key_path, delete_request_url])
       #puts "Delete user response: #{delete_response}"
       if delete_response
         response_json = JSON.parse(delete_response)

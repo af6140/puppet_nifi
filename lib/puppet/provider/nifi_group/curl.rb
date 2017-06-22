@@ -6,8 +6,8 @@ Puppet::Type.type(:nifi_group).provide(:curl, :parent=> Puppet::Provider::Nifi )
 
 
   def exists?
-    existing_user = get_group(@resource[:name])
-    ! existing_user.nil?
+    existing_group = get_group(@resource[:name])
+    ! existing_group.nil?
   end
 
   def get_group(identity)
@@ -36,8 +36,7 @@ Puppet::Type.type(:nifi_group).provide(:curl, :parent=> Puppet::Provider::Nifi )
     # }
     #
 
-    search_command = ['-k', '-X', 'GET', '--cert', @resource[:auth_cert_path], '--key', @resource[:auth_cert_key_path] , "#{@resource[:api_url]}/tenants/search-results?q=#{@resource[:name]}"]
-    puts("search command #{search_command}")
+    search_command = ['-k', '-X', 'GET', '--cert', cert_path, '--key', key_path, "#{api_url}/tenants/search-results?q=#{@resource[:name]}"]
     search_response = curl(search_command)
     #puts "search response = #{search_response}"
     response_json = JSON.parse(search_response)
@@ -85,7 +84,6 @@ Puppet::Type.type(:nifi_group).provide(:curl, :parent=> Puppet::Provider::Nifi )
     #   "accessPolicies": [{…}]
     # }
     # }
-    puts("###########create user")
     username = @resource[:name]
     req_json = %Q{
       {
@@ -112,8 +110,7 @@ Puppet::Type.type(:nifi_group).provide(:curl, :parent=> Puppet::Provider::Nifi )
         }
       }
     }
-    #puts "request_json :#{req_json}"
-    curl(['-k', '-X', 'POST', '--cert', resource[:auth_cert_path], '--key', @resource[:auth_cert_key_path], "#{@resource[:api_url]}/tenants/user-groups"])
+    curl(['-k', '-X', 'POST', '--cert', cert_path, '--key', key_path, "#{api_url}/tenants/user-groups"])
   end
 
 
@@ -121,8 +118,8 @@ Puppet::Type.type(:nifi_group).provide(:curl, :parent=> Puppet::Provider::Nifi )
     exisiting_group = get_group(@resource[:name])
     if ! exisiting_group.nil?
       user_id = exisiting_group['id']
-      delete_request_url= "#{@resource[:api_url]}/tenants/user-groups/#{user_id}"
-      delete_response= curl(['-k', '-X', 'DELETE', '--cert', @resource[:auth_cert_path], '--key', @resource[:auth_cert_key_path], delete_request_url])
+      delete_request_url= "#{api_url}/tenants/user-groups/#{user_id}"
+      delete_response= curl(['-k', '-X', 'DELETE', '--cert', cert_path, '--key', key_path, delete_request_url])
       #puts "Delete gruop response: #{delete_response}"
       if delete_response
         response_json = JSON.parse(delete_response)

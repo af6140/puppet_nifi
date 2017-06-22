@@ -4,6 +4,18 @@ provider_class =Puppet::Type.type(:nifi_group).provider(:curl)
 
 describe  provider_class do
   # Tests will go here
+  let(:nifi_https_host) {
+    'nifi-test'
+  }
+  let(:nifi_https_port) {
+    '8443'
+  }
+  let(:nifi_initial_admin_cert_path) {
+    '/tmp/auth_cert.pem'
+  }
+  let(:nifi_initial_admin_key_path) {
+    '/tmp/auth.key'
+  }
   on_supported_os.each do |os, facts|
 
     before(:each) do
@@ -12,19 +24,20 @@ describe  provider_class do
     context "on #{os}" do
       before :each do
         Facter.clear
+        facts[:nifi_https_host]=nifi_https_host
+        facts[:nifi_https_port]=nifi_https_port
+        facts[:nifi_initial_admin_cert_path]=nifi_initial_admin_cert_path
+        facts[:nifi_initial_admin_key_path]=nifi_initial_admin_key_path
         facts.each do |k, v|
           Facter.stubs(:fact).with(k).returns Facter.add(k) { setcode { v } }
         end
       end
 
-      context 'create user' do
+      context 'create group when not existing' do
         let(:resource) {
           Puppet::Type.type(:nifi_group).new({
                                               :ensure=>'present',
                                               :name => 'test',
-                                              :auth_cert_path=> '/tmp/auth_cert.pem',
-                                              :auth_cert_key_path => '/tmp/auth.key',
-                                              :api_url => 'https://datafeed-nf02a.dev.co.entpub.net:8443/nifi-api',
                                               :provider => 'curl'
                                             })
         }
@@ -34,7 +47,7 @@ describe  provider_class do
         before :each do
           #puts provider.pretty_inspect
           provider.stubs(:curl).with(
-            ['-k', '-X', 'GET', '--cert', '/tmp/auth_cert.pem', '--key', '/tmp/auth.key', 'https://datafeed-nf02a.dev.co.entpub.net:8443/nifi-api/tenants/search-results?q=test']
+            ['-k', '-X', 'GET', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/search-results?q=test"]
           ).returns('
             {
             "userGroups": [
@@ -64,7 +77,7 @@ describe  provider_class do
         describe 'create group' do
           it 'makes a group' do
             provider.expects(:curl).with(
-              ['-k', '-X', 'POST', '--cert', '/tmp/auth_cert.pem', '--key', '/tmp/auth.key', 'https://datafeed-nf02a.dev.co.entpub.net:8443/nifi-api/tenants/user-groups']
+              ['-k', '-X', 'POST', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/user-groups"]
             )
             expect(provider.create).to be_truthy
             expect(provider.exists?).to be_truthy
@@ -78,9 +91,6 @@ describe  provider_class do
           Puppet::Type.type(:nifi_group).new({
                                               :ensure=>'present',
                                               :name => 'test2',
-                                              :auth_cert_path=> '/tmp/auth_cert.pem',
-                                              :auth_cert_key_path => '/tmp/auth.key',
-                                              :api_url => 'https://datafeed-nf02a.dev.co.entpub.net:8443/nifi-api',
                                               :provider => 'curl'
                                             })
         }
@@ -90,7 +100,7 @@ describe  provider_class do
         describe 'delete a group' do
           it 'delete group specified ' do
             provider.expects(:curl).with(
-              ['-k', '-X', 'GET', '--cert', '/tmp/auth_cert.pem', '--key', '/tmp/auth.key', 'https://datafeed-nf02a.dev.co.entpub.net:8443/nifi-api/tenants/search-results?q=test2']
+              ['-k', '-X', 'GET', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/search-results?q=test2"]
             ).returns(
               %q{
                 {
@@ -121,7 +131,7 @@ describe  provider_class do
                 } }
             ).at_least(1)
             provider.expects(:curl).with(
-              ['-k', '-X', 'DELETE', '--cert', '/tmp/auth_cert.pem', '--key', '/tmp/auth.key', 'https://datafeed-nf02a.dev.co.entpub.net:8443/nifi-api/tenants/user-groups/65a6839c-015c-1000-ffff-ffffee0e468c']
+              ['-k', '-X', 'DELETE', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/user-groups/65a6839c-015c-1000-ffff-ffffee0e468c"]
             ).once
             expect(provider.destroy).to be_truthy
           end

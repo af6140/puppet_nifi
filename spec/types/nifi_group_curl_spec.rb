@@ -47,7 +47,7 @@ describe  provider_class do
         before :each do
           #puts provider.pretty_inspect
           provider.stubs(:curl).with(
-            ['-k', '-X', 'GET', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/search-results?q=test"]
+            ['-k', '-s', '-X', 'GET', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/search-results?q=test"]
           ).returns('
             {
             "userGroups": [
@@ -77,7 +77,7 @@ describe  provider_class do
         describe 'create group' do
           it 'makes a group' do
             provider.expects(:curl).with(
-              ['-k', '-X', 'POST', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/user-groups"]
+              ['-k', '-s', '-X', 'POST', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/user-groups"]
             )
             expect(provider.create).to be_truthy
             expect(provider.exists?).to be_truthy
@@ -100,7 +100,7 @@ describe  provider_class do
         describe 'delete a group' do
           it 'delete group specified ' do
             provider.expects(:curl).with(
-              ['-k', '-X', 'GET', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/search-results?q=test2"]
+              ['-k', '-s', '-X', 'GET', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/search-results?q=test2"]
             ).returns(
               %q{
                 {
@@ -131,7 +131,7 @@ describe  provider_class do
                 } }
             ).at_least(1)
             provider.expects(:curl).with(
-              ['-k', '-X', 'DELETE', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/user-groups/65a6839c-015c-1000-ffff-ffffee0e468c"]
+              ['-k', '-s', '-X', 'DELETE', '--cert', nifi_initial_admin_cert_path, '--key', nifi_initial_admin_key_path, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/user-groups/65a6839c-015c-1000-ffff-ffffee0e468c"]
             ).once
             expect(provider.destroy).to be_truthy
           end

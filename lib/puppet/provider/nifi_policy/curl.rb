@@ -16,7 +16,7 @@ Puppet::Type.type(:nifi_policy).provide(:curl, :parent=> Puppet::Provider::Nifi 
 
 
   def get_policy(resource, action)
-    search_command = ['-k', '-X', 'GET', '--cert', cert_path, '--key', key_path, "#{api_url}/policies/#{action}/#{resource}"]
+    search_command = ['-k', '-s', '-X', 'GET', '--cert', cert_path, '--key', key_path, "#{api_url}/policies/#{action}/#{resource}"]
     search_response = curl(search_command)
     if(search_response.nil?)
       return nil
@@ -27,12 +27,12 @@ Puppet::Type.type(:nifi_policy).provide(:curl, :parent=> Puppet::Provider::Nifi 
   end
 
   def delete_policy(resrouce, action)
-    search_command = ['-k', '-X', 'GET', '--cert', cert_path, '--key', key_path, "#{api_url}/policies/#{action}/#{resource}"]
+    search_command = ['-k', '-s', '-X', 'GET', '--cert', cert_path, '--key', key_path, "#{api_url}/policies/#{action}/#{resource}"]
     search_response = curl(search_command)
     if(! search_response.nil?)
       policy_json = JSON.parse(search_response)
       id = policy_json['id']
-      delete_command = ['-k', '-X', 'DELETE', '--cert', cert_path, '--key', key_path, "#{api_url}/policies/#{id}"]
+      delete_command = ['-k', '-s', '-X', 'DELETE', '--cert', cert_path, '--key', key_path, "#{api_url}/policies/#{id}"]
       delete_response = curl(delete_command)
       if(delete_response)
         puts("Delete policy response: #{delete_response}")
@@ -72,7 +72,7 @@ Puppet::Type.type(:nifi_policy).provide(:curl, :parent=> Puppet::Provider::Nifi 
           }
         }
     }
-    create_command = ['-k', '-X', 'POST', '--cert', cert_path, '--key', key_path, '-d', request_json, "#{api_url}/policies"]
+    create_command = ['-k', '-s', '-X', 'POST', '--cert', cert_path, '--key', key_path, '-d', request_json, "#{api_url}/policies"]
     create_response = curl(create_command)
     @property_hash[:ensure] = :present
     exists? ? (return true) : (return false)

@@ -36,7 +36,7 @@ Puppet::Type.type(:nifi_group).provide(:curl, :parent=> Puppet::Provider::Nifi )
     # }
     #
 
-    search_command = ['-k', '-X', 'GET', '--cert', cert_path, '--key', key_path, "#{api_url}/tenants/search-results?q=#{@resource[:name]}"]
+    search_command = ['-k', '-s', '-X', 'GET', '--cert', cert_path, '--key', key_path, "#{api_url}/tenants/search-results?q=#{@resource[:name]}"]
     search_response = curl(search_command)
     #puts "search response = #{search_response}"
     response_json = JSON.parse(search_response)
@@ -110,7 +110,7 @@ Puppet::Type.type(:nifi_group).provide(:curl, :parent=> Puppet::Provider::Nifi )
         }
       }
     }
-    curl(['-k', '-X', 'POST', '--cert', cert_path, '--key', key_path, "#{api_url}/tenants/user-groups"])
+    curl(['-k', '-s', '-X', 'POST', '--cert', cert_path, '--key', key_path, "#{api_url}/tenants/user-groups"])
   end
 
 
@@ -119,7 +119,7 @@ Puppet::Type.type(:nifi_group).provide(:curl, :parent=> Puppet::Provider::Nifi )
     if ! exisiting_group.nil?
       user_id = exisiting_group['id']
       delete_request_url= "#{api_url}/tenants/user-groups/#{user_id}"
-      delete_response= curl(['-k', '-X', 'DELETE', '--cert', cert_path, '--key', key_path, delete_request_url])
+      delete_response= curl(['-k', '-s', '-X', 'DELETE', '--cert', cert_path, '--key', key_path, delete_request_url])
       #puts "Delete gruop response: #{delete_response}"
       if delete_response
         response_json = JSON.parse(delete_response)

@@ -21,8 +21,15 @@ Puppet::Type.type(:nifi_policy).provide(:curl, :parent=> Puppet::Provider::Nifi 
     if(search_response.nil?)
       return nil
     else
-      policy_json= JSON.parse(search_response)
-      return policy_json
+      policy_json= nil
+      begin
+        #when not roud
+        policy_json = JSON.parse(search_response)
+        return policy_json
+      rescue Exception =>e
+        # not found policy
+        return nil
+      end
     end
   end
 

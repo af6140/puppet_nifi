@@ -95,4 +95,20 @@ Puppet::Type.type(:nifi_policy).provide(:curl, :parent=> Puppet::Provider::Nifi 
     still_there = exists?
     still_there ? (return false) :(return true)
   end
+
+  def parse_name
+    name_specs= @resource['name'].split(':')
+  end
+
+  def get_resource_type(name_specs)
+    resource_path = name_specs[0]
+    resource_spaces = resource_path.split('/')
+    resource_spaces[-1]
+  end
+
+  def get_resource_id(name_specs)
+    resource_type = get_resource_type
+    resource_name = name_specs[1]
+
+  end
 end

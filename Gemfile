@@ -18,6 +18,7 @@ group :test do
   gem "puppet-lint-version_comparison-check"
   gem "puppet-lint-classes_and_types_beginning_with_digits-check"
   gem "puppet-lint-unquoted_string-check"
+  gem "webmock"
 end
 
 group :development do

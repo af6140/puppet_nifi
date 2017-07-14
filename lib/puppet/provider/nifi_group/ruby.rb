@@ -11,6 +11,7 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
   end
 
   def self.instances
+    config
     search_json = Ent::Nifi::Rest.get_all("tenants/user-groups")
     if search_json.nil?
       return []

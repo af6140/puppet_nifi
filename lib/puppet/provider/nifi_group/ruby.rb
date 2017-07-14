@@ -6,6 +6,7 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
 
   def initialize(value={})
     super(value)
+    config
     @property_flush = {}
   end
 
@@ -74,11 +75,11 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
     #   "accessPolicies": [{…}]
     # }
     # }
-    username = @resource[:name]
+    groupname = @resource[:name]
     req_json = %Q{
       {
         "revision": {
-          "version": 0,
+          "version": 0
         },
         "id": null,
         "uri": null,
@@ -93,30 +94,14 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
         "component": {
           "id": null,
           "parentGroupId": null,
-          "identity": "#{username}",
+          "identity": "#{groupname}",
           "userGroups": [],
           "users": [],
           "accessPolicies": []
         }
       }
     }
-    curl(['-k', '-s', '-X', 'POST', '--cert', cert_path, '--key', key_path, "#{api_url}/tenants/user-groups"])
-  end
-
-
-  def delete_group
-    exisiting_group = get_group(@resource[:name])
-    if ! exisiting_group.nil?
-      user_id = exisiting_group['id']
-      delete_request_url= "#{api_url}/tenants/user-groups/#{user_id}"
-      delete_response= curl(['-k', '-s', '-X', 'DELETE', '--cert', cert_path, '--key', key_path, delete_request_url])
-      #puts "Delete gruop response: #{delete_response}"
-      if delete_response
-        response_json = JSON.parse(delete_response)
-        response_code = response_json['status']
-        puts "Delete response code : #{response_code}"
-      end
-    end
+    Ent::Nifi::Rest.create("tenants/user-groups", JSON.parse(req_json))
   end
 
   def create

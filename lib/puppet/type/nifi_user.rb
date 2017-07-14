@@ -18,4 +18,8 @@ Puppet::Type.newtype(:nifi_user) do
         end
     end
   end
+
+  newproperty(:groups, :array_matching => :all ) do
+    defaultto []
+  end
 end

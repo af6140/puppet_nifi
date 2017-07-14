@@ -5,17 +5,8 @@ class Puppet::Provider::Nifi < Puppet::Provider
   require 'facter'
   require 'uri'
 
-  #check curl command exists
-  confine :true => begin
-    system("curl -V")
-  end
 
   initvars
-
-  commands :curl => 'curl'
-  commands :cat => 'cat'
-  #mk_resource_methods
-
 
   #default nothing returned
   def self.instances

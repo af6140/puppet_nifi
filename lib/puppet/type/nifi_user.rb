@@ -22,4 +22,9 @@ Puppet::Type.newtype(:nifi_user) do
   newproperty(:groups, :array_matching => :all ) do
     defaultto []
   end
+
+  autorequire(:nifi_group) do
+    self[:groups]
+  end
+
 end

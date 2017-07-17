@@ -152,6 +152,68 @@ describe  provider_class do
 
       end
 
+
+
+      context 'delete user' do
+        let(:resource) {
+          Puppet::Type.type(:nifi_user).new({
+                                              :ensure=>'absent',
+                                              :name => 'test',
+                                              :provider => 'ruby'
+                                            })
+        }
+        let(:existing_user) {
+          'test'
+        }
+        let(:provider) { #described_class.new(resource)
+          resource.provider
+        }
+        let(:tenant_id) {
+          'a1b47e12-015c-1000-ffff-ffff95c53fee'
+        }
+        let(:existing_users ) {
+          %Q{
+              {
+                  "users": [
+                      {
+                          "revision": {
+                              "version": 0
+                          },
+                          "id": "#{tenant_id}",
+                          "uri": "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/user-groups/#{tenant_id}",
+                          "permissions": {
+                              "canRead": true,
+                              "canWrite": true
+                          },
+                          "component": {
+                              "id": "a1b47e12-015c-1000-ffff-ffff95c53fee",
+                              "identity": "#{existing_user}",
+                              "userGroups": [ ]
+                          }
+                      }
+                  ]
+              }
+          }
+        }
+        before :each do
+          #puts provider.pretty_inspect
+          #provider.stubs(:java).with('-version').returns('9')
+          stub_request(:get, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/users").
+            with(:headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+            to_return(:status => 200, :body => existing_users, :headers => {})
+
+          stub_request(:delete, "https://nifi-test:8443/nifi-api/tenants/users/#{tenant_id}").
+            to_return(:status => 200)
+        end
+
+
+        it 'deletes successfully' do
+          expect(provider.destroy).to be_truthy
+          expect(provider.exists?).to be_falsy
+        end
+
+      end
+
     end
   end
 end

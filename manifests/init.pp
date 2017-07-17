@@ -46,6 +46,9 @@ class nifi (
   String[1] $provenance_storage_size = "1 GB"
 ) inherits ::nifi::params {
 
+  package {'rubygem-rest-client':
+    ensure => 'present'
+  }
 
   notify{"initial admin identity: ${initial_admin_identity}":
     message => "${initial_admin_identity}",

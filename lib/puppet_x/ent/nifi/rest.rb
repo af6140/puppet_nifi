@@ -21,7 +21,6 @@ module Ent
         request { |nifi|
           begin
             response = nifi[resource_name].get(:accept => :json)
-            puts response
           rescue => e
             Ent::Nifi::ExceptionHandler.process(e) { |msg|
               raise "Could not request #{resource_name} from #{nifi.url}: #{msg}"
@@ -39,7 +38,6 @@ module Ent
       def self.create(resource_name, data)
         request { |nifi|
           begin
-            puts "#{data}"
             nifi[resource_name].post JSON.generate(data), :accept => :json, :content_type => :json
           rescue => e
             Ent::Nifi::ExceptionHandler.process(e) { |msg|

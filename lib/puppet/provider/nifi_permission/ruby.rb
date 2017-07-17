@@ -8,7 +8,6 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
   mk_resource_methods
   #confine :feature => :restclient
   def exists?
-    puts "Calling exists?###############################"
     name  = @resource['name']
     name_specs= name.split(':')
     permission_action = name_specs[0]
@@ -17,7 +16,6 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
     permission_entity_name = name_specs[3]
     config
     existing_policy = get_policy(permission_action, permission_resource)
-    puts("existing policy***********#{existing_policy}### for entity type #{permission_entity} with name #{permission_entity_name}")
     if ! existing_policy.nil?
       if permission_entity == 'user'
         users= existing_policy['component']['users'].map do  | entry |
@@ -68,11 +66,9 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
       target = groups.select { |item|  permission_entity_name == item['component']['identity']}
     end
 
-    puts "target:#{target}"
     tenant_id = target[0].nil? ? nil : target[0]['component']['id']
 
     if tenant_id.nil?
-      puts "No tenant found with #{permission_entity_name}"
       return false
     end
 
@@ -150,7 +146,6 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
           }
       }
       end
-      puts "Creating policy since its missing"
       Ent::Nifi::Rest.create('policies', JSON.parse(request_json))
     else
       #policy exists now update permssion

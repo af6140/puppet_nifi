@@ -77,11 +77,13 @@ module Ent
       end
 
       def self.get_users
-        get_all("tenants/users")['users']
+        result = get_all("tenants/users")
+        result.nil? ? [] : result['users']
       end
 
       def self.get_groups
-        get_all("tenants/user-groups")['userGroups']
+        result = get_all("tenants/user-groups")
+        result.nil? ? [] : result['userGroups']
       end
 
       def self.search_tenant(tenant_name)

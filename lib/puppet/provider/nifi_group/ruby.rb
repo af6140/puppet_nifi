@@ -34,7 +34,7 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
     resource_instances = instances
     resources.keys.each do |name|
       if provider = resource_instances.find{ |r| r.name == name }
-        r[name].provider = provider
+        resources[name].provider = provider
       end
     end
   end

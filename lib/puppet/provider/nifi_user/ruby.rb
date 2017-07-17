@@ -21,7 +21,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
       end
       new(:name => user_json['component']['identity'],
         :ensure => :present,
-        :gruops => member_groups
+        :groups => member_groups
       )
     end
   end
@@ -31,7 +31,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
     resource_instances = instances
     resources.keys.each do |name|
       if provider = resource_instances.find{ |r| r.name == name }
-        r[name].provider = provider
+        resources[name].provider = provider
       end
     end
   end

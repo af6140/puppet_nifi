@@ -108,13 +108,26 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
     Ent::Nifi::Rest.create("tenants/user-groups", JSON.parse(req_json))
   end
 
+  def delete_group(groupname)
+    config
+    groups = Ent::Nifi::Rest.get_groups
+    found=groups.select do |group|
+      group['component']['identity']==groupname
+    end
+    if ! found.nil? and ! found[0].nil?
+      group_id = found[0]['id']
+      Ent::Nifi::Rest.destroy("tenants/user-groups/#{group_id}")
+    end
+  end
+
   def create
     create_group
     @property_hash[:ensure] = :present
   end
 
   def destroy
-
+    delete_group(@resource[:name])
+    @property_hash[:ensure] = :absent
   end
 
   def refresh

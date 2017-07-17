@@ -15,6 +15,7 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
     permission_resource = name_specs[1]
     permission_entity = name_specs[2]
     permission_entity_name = name_specs[3]
+    config
     existing_policy = get_policy(permission_action, permission_resource)
     puts("existing policy***********#{existing_policy}### for entity type #{permission_entity} with name #{permission_entity_name}")
     if ! existing_policy.nil?

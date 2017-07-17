@@ -9,6 +9,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
     @property_flush = {}
   end
   def self.instances
+    config
     users_raw = Ent::Nifi::Rest.get_users
     if users_raw.nil?
       return []

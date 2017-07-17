@@ -22,6 +22,7 @@ module Ent
         request { |nifi|
           begin
             response = nifi[resource_name].get(:accept => :json)
+            puts response
           rescue => e
             Ent::Nifi::ExceptionHandler.process(e) { |msg|
               raise "Could not request #{resource_name} from #{nifi.url}: #{msg}"

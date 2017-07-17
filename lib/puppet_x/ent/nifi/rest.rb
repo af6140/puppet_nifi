@@ -18,7 +18,6 @@ module Ent
       end
 
       def self.get_all(resource_name)
-        puts "Get all *************** #{resource_name}"
         request { |nifi|
           begin
             response = nifi[resource_name].get(:accept => :json)
@@ -87,7 +86,6 @@ module Ent
       end
 
       def self.search_tenant(tenant_name)
-        puts "search tenant *************** #{tenant_name}"
         request { |nifi|
           begin
             response = nifi["tenants/search-results"].get(:accept => :json, :params => {q:URI.escape(tenant_name)})

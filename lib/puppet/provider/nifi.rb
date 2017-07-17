@@ -8,6 +8,8 @@ class Puppet::Provider::Nifi < Puppet::Provider
 
   initvars
 
+  confine :feature => :restclient
+
   #default nothing returned
   def self.instances
     []

@@ -2,7 +2,7 @@ require 'pathname'
 Puppet::Type.newtype(:nifi_permission) do
   @doc = %q{Create a new user in nifi
     Example:
-      nifi_user {
+      nifi_user {'test':
          ensure => present,
       }
   }
@@ -10,7 +10,6 @@ Puppet::Type.newtype(:nifi_permission) do
 
   newparam(:name, :namevar => true) do
     desc "The name of the user"
-
     validate do | value |
       #spec
       #resource:[read|write]:[group:user]:group/username

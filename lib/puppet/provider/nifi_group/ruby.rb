@@ -30,7 +30,6 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
   end
 
   def self.prefetch(resources)
-    puts "prefetch groups"
     # resources parameter is an hash of resources managed by Puppet (catalog)
     resource_instances = instances
     resources.keys.each do |name|
@@ -41,7 +40,6 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
   end
 
   def exists?
-    puts "Checking group #{@resource[:name]} exists ..."
     @property_hash[:ensure] == :present
   end
 
@@ -141,7 +139,6 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
 
   # Called once after Puppet creates, destroys or updates a resource
   def flush
-    puts "Flusing ...."
     if @property_flush
       # update resource here
       @property_flush = nil

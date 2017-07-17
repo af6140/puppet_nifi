@@ -57,13 +57,13 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
     permission_entity = name_specs[2]
     permission_entity_name = name_specs[3]
 
-
+    config
     if permission_entity == 'user'
-      users = get_users
+      users = Ent::Nifi::Rest.get_users
       target = users.select { |item|  permission_entity_name == item['component']['identity']}
     end
     if permission_entity == 'group'
-      groups = get_groups
+      groups = Ent::Nifi::Rest.get_groups
       target = groups.select { |item|  permission_entity_name == item['component']['identity']}
     end
 
@@ -185,10 +185,10 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
     name_specs= name.split(':')
     policy_resource = name_specs[0]
     policy_action = name_specs[1]
+    config
     delete_policy(policy_resource, policy_action)
     @property_hash.clear
-    still_there = exists?
-    still_there ? (return false) :(return true)
+    exists? ? (return false) :(return true)
   end
 
 
@@ -211,13 +211,4 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
     resource_name = name_specs[1]
   end
 
-  def get_users
-    config
-    Ent::Nifi::Rest.get_all("tenants/users")['users']
-  end
-
-  def get_groups
-    config
-    Ent::Nifi::Rest.get_all("tenants/user-groups")['userGroups']
-  end
 end

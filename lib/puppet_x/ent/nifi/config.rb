@@ -3,7 +3,6 @@ module Ent
     class Config
       def self.configure(url, cert_path, key_path)
         if @config.nil?
-          #puts "Initialize config********"
           @config = {}
           @config[:url] = url
           @config[:cert] = OpenSSL::X509::Certificate.new(File.read(cert_path))

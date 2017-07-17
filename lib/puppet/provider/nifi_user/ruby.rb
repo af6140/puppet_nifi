@@ -127,7 +127,6 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
 
 
   def create
-    puts "Creating user ......"
     create_user(@resource[:name], @resource[:groups])
     @property_hash[:ensure] = :present
   end
@@ -147,7 +146,6 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
 
   # Called once after Puppet creates, destroys or updates a resource
   def flush
-    puts "flusing......"
     if @property_flush
       # update resource here
       users_raw = Ent::Nifi::Rest.search_tenant(@resource[:name])['users']

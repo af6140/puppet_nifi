@@ -202,7 +202,7 @@ describe  provider_class do
             with(:headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
             to_return(:status => 200, :body => existing_users, :headers => {})
 
-          stub_request(:delete, "https://nifi-test:8443/nifi-api/tenants/users/#{tenant_id}?clientId=puppet&version=1").
+          stub_request(:delete, "https://nifi-test:8443/nifi-api/tenants/users/#{tenant_id}?clientId=puppet&version=0").
             to_return(:status => 200)
         end
 

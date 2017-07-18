@@ -166,11 +166,13 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
       }
       if permission_entity=='user'
         existing_policy['component']['users'] << tenant_entry
+        version = existing_policy['revision']['version']
       end
       if permission_entity=='group'
+        version = existing_policy['revision']['version']
         existing_policy['component']['userGroups'] << tenant_entry
       end
-      Ent::Nifi::Rest.update("/policies/#{policy_id}", existing_policy)
+      Ent::Nifi::Rest.update("/policies/#{policy_id}", existing_policy, 'puppet', version)
     end
     @property_hash[:ensure] = :present
     exists? ? true : false

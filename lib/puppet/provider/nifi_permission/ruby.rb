@@ -182,14 +182,15 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
     policy_resource = name_specs[0]
     policy_action = name_specs[1]
     config
-    delete_policy(policy_resource, policy_action)
+    delete_permission(policy_resource, policy_action)
     @property_hash.clear
     exists? ? (return false) :(return true)
   end
 
 
-  def delete_permission
-
+  def delete_permission(resource, action)
+    policy_json = get_policy(action, resource)
+    policy_id = policy_json['id']
   end
 
   def parse_name

@@ -59,7 +59,7 @@ module Ent
         }
       end
 
-      def self.destroy(resource_name)
+      def self.destroy(resource_name, clientId, version)
         request { |nifi|
           begin
             nifi[resource_name].delete params: {version: '9999', clientId: 'puppet'}, :accept => :json

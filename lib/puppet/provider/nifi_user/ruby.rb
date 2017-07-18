@@ -27,10 +27,9 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
   end
 
   def self.prefetch(resources)
-    # resources parameter is an hash of resources managed by Puppet (catalog)
-    resource_instances = instances
+    repositories = instances
     resources.keys.each do |name|
-      if provider = resource_instances.find{ |r| r.name == name }
+      if provider = repositories.find { |repository| repository.name == name }
         resources[name].provider = provider
       end
     end
@@ -134,6 +133,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
 
   def destroy
     delete_user(@resource[:name])
+    @property_hash.clear
     @property_hash[:ensure] = :absent
   end
 
@@ -143,6 +143,15 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
 
   def groups=(value)
     @property_flush[:groups]=value
+    @property_hash[:groups] =value
+  end
+
+  def insync?(is)
+    return false if [:purged, :absent].include?(is)
+    should = resource[:groups]
+    diff = is - should
+
+    diff.empty?
   end
 
   # Called once after Puppet creates, destroys or updates a resource
@@ -169,8 +178,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
       end
 
       @property_flush = nil
+      @property_hash = resource.to_hash
     end
-    @property_hash = resource.to_hash
   end
-
 end

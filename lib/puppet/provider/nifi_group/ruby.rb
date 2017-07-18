@@ -131,6 +131,7 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
 
   def destroy
     delete_group(@resource[:name])
+    @property_hash.clear
     @property_hash[:ensure] = :absent
   end
 
@@ -143,8 +144,7 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
     if @property_flush
       # update resource here
       @property_flush = nil
+      @property_hash = resource.to_hash
     end
-    @property_hash = resource.to_hash
   end
-
 end

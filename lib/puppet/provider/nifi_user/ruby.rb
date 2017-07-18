@@ -147,6 +147,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
 
   # Called once after Puppet creates, destroys or updates a resource
   def flush
+    clientId='puppet'
     if @property_flush
       # update resource here
       users_raw = Ent::Nifi::Rest.search_tenant(@resource[:name])['users']
@@ -156,6 +157,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
       else
         #existing user
         user_id = users_raw[0]['id']
+        version = users_raw[0]['revision']['version']
         user_json = Ent::Nifi::Rest.get_all("tenants/users/#{user_id}")
         all_groups = Ent::Nifi::Rest.get_groups
         new_groups = @property_flush[:groups]
@@ -163,7 +165,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
           new_groups.include? current_group['component']['identity']
         end
         user_json['component']['userGroups']= new_groups
-        Ent::Nifi::Rest.update("tenants/users/#{user_id}", user_json)
+        Ent::Nifi::Rest.update("tenants/users/#{user_id}", user_json, clientId, version)
       end
 
       @property_flush = nil

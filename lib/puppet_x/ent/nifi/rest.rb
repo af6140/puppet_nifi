@@ -47,7 +47,7 @@ module Ent
         }
       end
 
-      def self.update(resource_name, data)
+      def self.update(resource_name, data, clientId, version)
         request { |nifi|
           begin
             nifi[resource_name].put JSON.generate(data), :accept => :json, :content_type => :json

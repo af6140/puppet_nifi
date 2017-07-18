@@ -62,7 +62,7 @@ module Ent
       def self.destroy(resource_name, clientId, version)
         request { |nifi|
           begin
-            nifi[resource_name].delete params: {version: '9999', clientId: 'puppet'}, :accept => :json
+            nifi[resource_name].delete params: {version: version.to_i+1, clientId: 'puppet'}, :accept => :json
           rescue RestClient::ResourceNotFound
             # resource already deleted, nothing to do
           rescue => e

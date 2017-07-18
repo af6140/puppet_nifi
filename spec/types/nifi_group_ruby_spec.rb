@@ -146,7 +146,7 @@ describe  provider_class do
             with(:headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
             to_return(:status => 200, :body => existing_groups, :headers => {})
 
-          stub_request(:delete, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/user-groups/#{tenant_id}?clientId=puppet&version=9999").
+          stub_request(:delete, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/user-groups/#{tenant_id}?clientId=puppet&version=1").
             to_return(:status => 200, :body => "", :headers => {})
 
         end

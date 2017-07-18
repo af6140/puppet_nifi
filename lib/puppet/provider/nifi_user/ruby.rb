@@ -170,7 +170,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
         all_groups = Ent::Nifi::Rest.get_groups
         new_groups = @property_flush[:groups]
 
-        current_member_groups = current_group['component']['users'].select do |group_user|
+        current_member_groups = all_groups['component']['users'].select do |group_user|
            group_user['id'] == user_id
         end
 
@@ -183,7 +183,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
           current_group['id']
         end
         future_member_groups_ids = future_member_groups.map do |future_group|
-          future_group[id]
+          future_group['id']
         end
 
         delete_group_ids = current_member_groups_ids- future_member_groups_ids
@@ -203,7 +203,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
             #remove user from group
             current_users = select_group['component']['users']
             future_users = current_users.select do |current_user|
-              current_user[id] != user_id
+              current_user['id'] != user_id
             end
 
             future_user_dto = future_users.map do |user|
@@ -211,7 +211,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
             end
             select_group['component']['users'] = future_user_dto
           end
-          Ent::Nifi::Rest.update("tenants/user-groups/#{group_id}", select_group, clientId, version)
+          Ent::Nifi::Rest.update("tenants/user-groups/#{group_id}", select_group)
         end
 
       end

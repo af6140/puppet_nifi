@@ -166,19 +166,66 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
       else
         #existing user
         user_id = users_raw[0]['id']
-        version = users_raw[0]['revision']['version']
         user_json = Ent::Nifi::Rest.get_all("tenants/users/#{user_id}")
         all_groups = Ent::Nifi::Rest.get_groups
         new_groups = @property_flush[:groups]
-        selected_groups = all_groups.select do |current_group|
+
+        current_member_groups = current_group['component']['users'].select do |group_user|
+           group_user['id'] == user_id
+        end
+
+        future_member_groups= all_groups.select do |current_group|
           new_groups.include? current_group['component']['identity']
         end
-        user_json['component']['userGroups']= new_groups
-        Ent::Nifi::Rest.update("tenants/users/#{user_id}", user_json, clientId, version)
+
+
+        current_member_groups_ids = current_member_groups.map do |current_group|
+          current_group['id']
+        end
+        future_member_groups_ids = future_member_groups.map do |future_group|
+          future_group[id]
+        end
+
+        delete_group_ids = current_member_groups_ids- future_member_groups_ids
+        add_group_ids = future_member_groups_ids-current_member_groups_ids
+
+
+
+        #update each group
+        all_groups.map do |select_group|
+          group_id =select_group['id']
+          version = select_group['revision']['version']
+          if add_group_ids.include? group_id
+            user_dto_json = to_user_dto(user_json)
+            select_group['component']['users'] << user_dto_json
+          end
+          if delete_group_ids.include? group_id
+            #remove user from group
+            current_users = select_group['component']['users']
+            future_users = current_users.select do |current_user|
+              current_user[id] != user_id
+            end
+
+            future_user_dto = future_users.map do |user|
+              to_user_dto user
+            end
+            select_group['component']['users'] = future_user_dto
+          end
+          Ent::Nifi::Rest.update("tenants/user-groups/#{group_id}", select_group, clientId, version)
+        end
+
       end
 
       @property_flush = nil
       @property_hash = resource.to_hash
     end
+  end
+
+
+  def to_user_dto(user_json)
+    #remove unnecessary element
+    user_dto_json = user_json['component'].delete('userGroups')
+    user_dto_json = user_dto_json['component'].delete('accessPolicies')
+    return user_dto_json
   end
 end

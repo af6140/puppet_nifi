@@ -102,7 +102,6 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
           "id": null,
           "parentGroupId": null,
           "identity": "#{groupname}",
-          "userGroups": [],
           "users": [],
           "accessPolicies": []
         }

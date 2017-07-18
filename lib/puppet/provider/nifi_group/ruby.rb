@@ -119,7 +119,8 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
     end
     if ! found.nil? and ! found[0].nil?
       group_id = found[0]['id']
-      Ent::Nifi::Rest.destroy("tenants/user-groups/#{group_id}")
+      version = found[0]['revision']['version']
+      Ent::Nifi::Rest.destroy("tenants/user-groups/#{group_id}", 'puppet', version)
     end
   end
 

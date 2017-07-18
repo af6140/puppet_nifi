@@ -121,7 +121,8 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
     end
     if ! found.nil? and ! found[0].nil?
       user_id = found[0]['id']
-      Ent::Nifi::Rest.destroy("tenants/users/#{user_id}")
+      version = found[0]['revision']['version']
+      Ent::Nifi::Rest.destroy("tenants/users/#{user_id}", "puppet", version)
     end
   end
 

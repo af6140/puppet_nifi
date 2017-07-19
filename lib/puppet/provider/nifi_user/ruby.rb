@@ -170,7 +170,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
         user_id = users_raw[0]['id']
         user_json = Ent::Nifi::Rest.get_all("tenants/users/#{user_id}")
         all_groups = Ent::Nifi::Rest.get_groups
-        new_groups = @property_flush[:groups]
+        new_groups = @property_flush[:groups].nil? ? [] : @property_flush[:groups]
 
         current_member_groups = all_groups.select do |group_user|
            group_user['id'] == user_id

@@ -35,7 +35,8 @@ module Nifi
         setcode do
           conf_dir = Facter.value('nifi_conf_dir')
           conf_file =File.join(conf_dir, 'nifi.properties')
-          Nifi::Configuration.https_port(conf_file)
+          port = Nifi::Configuration.https_port(conf_file)
+          port.nil? ? '' : port
         end
       end
 
@@ -44,14 +45,16 @@ module Nifi
         setcode do
           conf_dir = Facter.value('nifi_conf_dir')
           conf_file =File.join(conf_dir, 'nifi.properties')
-          Nifi::Configuration.https_host(conf_file)
+          host = Nifi::Configuration.https_host(conf_file)
+          host.nil? ? '' : host
         end
       end
 
       Facter.add(:nifi_root_process_group) do
         confine :kernel => "Linux"
         setcode do
-          Nifi::Flow.rootProcessGroup
+          rg = Nifi::Flow.rootProcessGroup
+          rg.nil? ? '' : rg
         end
       end
       #

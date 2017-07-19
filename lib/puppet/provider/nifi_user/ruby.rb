@@ -107,7 +107,10 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
     selected_groups = all_groups.select do |current_group|
       groups.include? current_group['component']['identity']
     end
-    user_json['component']['userGroups']= selected_groups
+    selected_groups_dto = selected_groups.map do |group|
+      to_group_dto(group)
+    end
+    user_json['component']['userGroups']= selected_groups_dto
     #puts "request_json :#{req_json}"
     Ent::Nifi::Rest.create("tenants/users", user_json )
   end
@@ -226,5 +229,11 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
     user_json['component'].delete('userGroups')
     user_json['component'].delete('accessPolicies')
     return user_json
+  end
+
+  def to_group_dto(group_json)
+    group_json['component'].delete('users')
+    group_json['component'].delete('accessPolicies')
+    return group_json
   end
 end

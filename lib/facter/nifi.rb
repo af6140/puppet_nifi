@@ -34,9 +34,13 @@ module Nifi
         confine :kernel => "Linux"
         setcode do
           conf_dir = Facter.value('nifi_conf_dir')
-          conf_file =File.join(conf_dir, 'nifi.properties')
-          port = Nifi::Configuration.https_port(conf_file)
-          port.nil? ? '' : port
+          if conf_dir.nil?
+            ''
+          else
+            conf_file =File.join(conf_dir, 'nifi.properties')
+            port = Nifi::Configuration.https_port(conf_file)
+            port.nil? ? '' : port
+          end
         end
       end
 
@@ -44,9 +48,13 @@ module Nifi
         confine :kernel => "Linux"
         setcode do
           conf_dir = Facter.value('nifi_conf_dir')
-          conf_file =File.join(conf_dir, 'nifi.properties')
-          host = Nifi::Configuration.https_host(conf_file)
-          host.nil? ? '' : host
+          if conf_dir.nil?
+            ''
+          else
+            conf_file =File.join(conf_dir, 'nifi.properties')
+            host = Nifi::Configuration.https_host(conf_file)
+            host.nil? ? '' : host
+          end
         end
       end
 

@@ -156,7 +156,6 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
 
   # Called once after Puppet creates, destroys or updates a resource
   def flush
-    clientId='puppet'
     if @property_flush
       # update resource here
       users_raw = Ent::Nifi::Rest.search_tenant(@resource[:name])['users']
@@ -170,7 +169,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
         all_groups = Ent::Nifi::Rest.get_groups
         new_groups = @property_flush[:groups]
 
-        current_member_groups = all_groups['component']['users'].select do |group_user|
+        current_member_groups = all_groups.select do |group_user|
            group_user['id'] == user_id
         end
 
@@ -224,8 +223,8 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
 
   def to_user_dto(user_json)
     #remove unnecessary element
-    user_dto_json = user_json['component'].delete('userGroups')
-    user_dto_json = user_dto_json['component'].delete('accessPolicies')
-    return user_dto_json
+    user_json['component'].delete('userGroups')
+    user_json['component'].delete('accessPolicies')
+    return user_json
   end
 end

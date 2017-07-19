@@ -13,9 +13,9 @@ Puppet::Type.newtype(:nifi_permission) do
     validate do | value |
       #spec
       #resource:[read|write]:[group:user]:group/username
-      if ! /(read|write):([a-zA-Z0-9\-\/_]+):(group|user):([a-zA-Z0-9\-_]+)/.match(value)
+      if ! /([a-zA-Z0-9\-\/_]+):(read|write):(group|user):([a-zA-Z0-9\-_]+)/.match(value)
         raise ArgumentError,
-              ' name must match /(read|write):([a-zA-Z0-9\-_]+):(group|user):([a-zA-Z0-9\-_]+)/'
+              ' name must match /([a-zA-Z0-9\-_]+):(read|write):(group|user):([a-zA-Z0-9\-_]+)/'
       end
     end
   end

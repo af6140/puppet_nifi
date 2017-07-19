@@ -10,8 +10,8 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
   def exists?
     name  = @resource['name']
     name_specs= name.split(':')
-    permission_action = name_specs[0]
-    permission_resource = name_specs[1]
+    permission_resource = name_specs[0]
+    permission_action = name_specs[1]
     permission_entity = name_specs[2]
     permission_entity_name = name_specs[3]
     config
@@ -51,8 +51,8 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
   def create
     name_spec  = @resource['name']
     name_specs= name_spec.split(':')
-    policy_action = name_specs[0]
-    policy_resource = name_specs[1]
+    policy_resource = name_specs[0]
+    policy_action = name_specs[1]
     permission_entity = name_specs[2]
     permission_entity_name = name_specs[3]
 

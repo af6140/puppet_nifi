@@ -47,7 +47,7 @@ describe  provider_class do
         let(:resource) {
           Puppet::Type.type(:nifi_permission).new({
                                               :ensure=>'present',
-                                              :name => 'read:flow:group:nifi-admin',
+                                              :name => 'flow:read:group:nifi-admin',
                                               :provider => 'ruby'
                                             })
         }

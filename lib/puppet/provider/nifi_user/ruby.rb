@@ -104,6 +104,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
     }
     user_json = JSON.parse(req_json_str)
     all_groups = Ent::Nifi::Rest.get_groups
+    groups = groups.nil? ? [] : groups
     selected_groups = all_groups.select do |current_group|
       groups.include? current_group['component']['identity']
     end
@@ -196,7 +197,6 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
         #update each group
         all_groups.map do |select_group|
           group_id =select_group['id']
-          version = select_group['revision']['version']
           if add_group_ids.include? group_id
             user_dto_json = to_user_dto(user_json)
             select_group['component']['users'] << user_dto_json
@@ -218,7 +218,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
 
       end
 
-      @property_flush = nil
+      @property_flush.clear
       @property_hash = resource.to_hash
     end
   end

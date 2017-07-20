@@ -80,7 +80,26 @@ describe  provider_class do
               }
           }
         }
+
+        let(:cluster_summary ){
+          %q{
+            { "clusterSummary": {
+                "connectedNodes": "value",
+                "connectedNodeCount": 0,
+                "totalNodeCount": 0,
+                "clustered": true,
+                "connectedToCluster": true
+                }
+            }
+           }
+        }
         before :each do
+
+          stub_request(:get, "https://nifi-test:8443/nifi-api/flow/cluster/summary").
+            with(:headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+            to_return(:status => 200, :body => cluster_summary, :headers => {})
+
+
           stub_request(:get, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/user-groups").
             with(:headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
             to_return(:status => 200, :body =>existing_groups, :headers => {})
@@ -139,9 +158,26 @@ describe  provider_class do
               }
           }
         }
+        let(:cluster_summary ){
+          %q{
+            { "clusterSummary": {
+                "connectedNodes": "value",
+                "connectedNodeCount": 0,
+                "totalNodeCount": 0,
+                "clustered": true,
+                "connectedToCluster": true
+              }
+            }
+          }
+        }
         before :each do
           #puts provider.pretty_inspect
           #provider.stubs(:java).with('-version').returns('9')
+          stub_request(:get, "https://nifi-test:8443/nifi-api/flow/cluster/summary").
+            with(:headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+            to_return(:status => 200, :body => cluster_summary, :headers => {})
+
+
           stub_request(:get, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/tenants/user-groups").
             with(:headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
             to_return(:status => 200, :body => existing_groups, :headers => {})

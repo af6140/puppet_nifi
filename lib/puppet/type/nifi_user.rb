@@ -19,6 +19,11 @@ Puppet::Type.newtype(:nifi_user) do
     end
   end
 
+  newparam(:require_cluster) do
+    defaultto true
+    newvalues(true, false)
+  end
+
   newproperty(:groups, :array_matching => :all ) do
     defaultto []
   end

@@ -81,7 +81,6 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
     #   "accessPolicies": [{…}]
     # }
     # }
-    puts "Creating group ..."
     groupname = @resource[:name]
     req_json = %Q{
       {
@@ -107,11 +106,14 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
         }
       }
     }
+    config
+    Ent::Nifi::Rest.node_ok(@resource[:require_cluster])
     Ent::Nifi::Rest.create("tenants/user-groups", JSON.parse(req_json))
   end
 
   def delete_group(groupname)
     config
+    Ent::Nifi::Rest.node_ok(@resource[:require_cluster])
     groups = Ent::Nifi::Rest.get_groups
     found=groups.select do |group|
       group['component']['identity']==groupname
@@ -142,7 +144,7 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
   def flush
     if @property_flush
       # update resource here
-      @property_flush = nil
+      @property_flush.clear
       @property_hash = resource.to_hash
     end
   end

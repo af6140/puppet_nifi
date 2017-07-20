@@ -12,7 +12,7 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
 
   def self.instances
     config
-    begin
+
     search_json = Ent::Nifi::Rest.get_all("tenants/user-groups")
     if search_json.nil?
       return []
@@ -22,9 +22,6 @@ Puppet::Type.type(:nifi_group).provide(:ruby, :parent=> Puppet::Provider::Nifi )
       new(:name => group_json['component']['identity'],
           :ensure => :present
       )
-    end
-    rescue => e
-      puts e.message
     end
 
   end

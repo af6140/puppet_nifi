@@ -66,21 +66,21 @@ module Nifi
             rg = Nifi::Flow.rootProcessGroup
           rescue => e
           end
-          rg.nil? ? '' : rg.to_json
+          rg.nil? ? '' : rg
         end
       end
       #
-      Facter.add(:nifi_process_groups) do
-        confine :kernel => "Linux"
-        setcode do
-          pgs =nil
-          begin
-          pgs = Nifi::Flow.processGroups
-          rescue =>e
-          end
-          pgs.nil? ? '' : pgs.to_json
-        end
-      end
+      # Facter.add(:nifi_process_groups) do
+      #   confine :kernel => "Linux"
+      #   setcode do
+      #     pgs =nil
+      #     begin
+      #     pgs = Nifi::Flow.processGroups
+      #     rescue =>e
+      #     end
+      #     pgs.nil? ? '' : pgs
+      #   end
+      # end
 
       return nil
     end

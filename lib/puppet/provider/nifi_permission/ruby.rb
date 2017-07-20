@@ -57,6 +57,7 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
     permission_entity_name = name_specs[3]
 
     config
+    Ent::Nifi::Rest.node_ok(@resource[:require_cluster])
     if permission_entity == 'user'
       users = Ent::Nifi::Rest.get_users
       target = users.select { |item|  permission_entity_name == item['component']['identity']}
@@ -149,7 +150,6 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
       Ent::Nifi::Rest.create('policies', JSON.parse(request_json))
     else
       #policy exists now update permssion
-      puts "Existing policy now checking whether it needs update"
       tenant_entry = {
         "revision" => {
           "version" => 0
@@ -183,7 +183,6 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
     name_specs= name.split(':')
     policy_resource = name_specs[0]
     policy_action = name_specs[1]
-    config
     delete_permission(policy_resource, policy_action)
     @property_hash.clear
     exists? ? (return false) :(return true)
@@ -193,21 +192,10 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
   def delete_permission(resource, action)
     policy_json = get_policy(action, resource)
     policy_id = policy_json['id']
-  end
-
-  def parse_name
-    name_specs= @resource['name'].split(':')
-  end
-
-  def get_resource_type(name_specs)
-    resource_path = name_specs[0]
-    resource_spaces = resource_path.split('/')
-    resource_spaces[-1]
-  end
-
-  def get_resource_id(name_specs)
-    resource_type = get_resource_type
-    resource_name = name_specs[1]
+    policy_version = policy_json['revision']['version']
+    config
+    Ent::Nifi::Rest.node_ok(@resource[:require_cluster])
+    Ent::Nifi::Rest.destroy("policies/#{policy_id}", 'puppet', policy_version)
   end
 
 end

@@ -102,6 +102,8 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
         }
       }
     }
+    config
+    Ent::Nifi::Rest.node_ok(@resource[:require_cluster])
     user_json = JSON.parse(req_json_str)
     all_groups = Ent::Nifi::Rest.get_groups
     groups = groups.nil? ? [] : groups
@@ -118,6 +120,7 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
 
   def delete_user(username)
     config
+    Ent::Nifi::Rest.node_ok(@resource[:require_cluster])
     users = Ent::Nifi::Rest.get_users
     found=users.select do |user|
       user['component']['identity']==username
@@ -161,6 +164,8 @@ Puppet::Type.type(:nifi_user).provide(:ruby, :parent=> Puppet::Provider::Nifi ) 
   # Called once after Puppet creates, destroys or updates a resource
   def flush
     if @property_flush
+      config
+      Ent::Nifi::Rest.node_ok(@resource[:require_cluster])
       # update resource here
       users_raw = Ent::Nifi::Rest.search_tenant(@resource[:name])['users']
       if users_raw.nil? || users_raw[0].nil?

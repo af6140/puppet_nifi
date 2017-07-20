@@ -18,18 +18,20 @@ class nifi::cluster_policy{
   $root_pg = parsejson($::nifi_root_process_group)
   if $root_pg {
     $root_pg_id = $root_pg['id']
-    nifi_permission {"data/process-groups/${root_pg_id}:read:group:cluster_nodes":
+    nifi_permission { "data/process-groups/${root_pg_id}:read:group:cluster_nodes":
       ensure => 'present'
     }
-    nifi_permission {"data/process-groups/${root_pg_id}:write:group:cluster_nodes":
+    nifi_permission { "data/process-groups/${root_pg_id}:write:group:cluster_nodes":
       ensure => 'present'
     }
 
-    if $::nifi::config_cluster and ! empty($::nifi::cluster_members) {
+    if $::nifi::config_cluster and !empty($::nifi::cluster_members) {
       each($::nifi::cluster_members) |$cluster_node| {
         nifi_user {$cluster_node:
+          ensure => 'present',
           groups => 'cluster_nodes'
         }
+      }
     }
   }
 }

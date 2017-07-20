@@ -213,7 +213,7 @@ module Nifi
           'id' => root_json['id'],
           'name' => root_json['component']['name']
         }
-        return data.to_s
+        return data.to_json
       end
 
     end

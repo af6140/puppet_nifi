@@ -101,6 +101,38 @@ module Ent
         }
       end
 
+      def self.node_ok(require_cluster)
+        request { |nifi|
+          begin
+            response = nifi["flow/cluster/summary"].get(:accept => :json)
+            if response.nil?
+              raise 'Node is not up'
+            end
+          rescue => e
+            Ent::Nifi::ExceptionHandler.process(e) { |msg|
+              raise "Node status check : #{msg}"
+            }
+          end
+
+          begin
+            cluster_summary = JSON.parse(response)
+            if cluster_summary['clustered']
+              if ! cluster_summary['connected']
+                raise 'Node is in cluster but not connected'
+              end
+            else
+              if require_cluster == true
+                raise 'Require cluster but node is not clustered'
+              end
+            end
+          rescue =>e
+            Ent::Nifi::ExceptionHandler.process(e) { |msg|
+              raise "Node status check : #{msg}"
+            }
+          end
+        }
+      end
+
     end
   end
 end

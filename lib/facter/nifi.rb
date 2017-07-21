@@ -61,17 +61,26 @@ module Nifi
       Facter.add(:nifi_root_process_group) do
         confine :kernel => "Linux"
         setcode do
-          rg = Nifi::Flow.rootProcessGroup
+          rg = nil
+          begin
+            rg = Nifi::Flow.rootProcessGroup
+          rescue => e
+          end
           rg.nil? ? '' : rg
         end
       end
       #
-      Facter.add(:nifi_process_groups) do
-        confine :kernel => "Linux"
-        setcode do
-          Nifi::Flow.processGroups
-        end
-      end
+      # Facter.add(:nifi_process_groups) do
+      #   confine :kernel => "Linux"
+      #   setcode do
+      #     pgs =nil
+      #     begin
+      #     pgs = Nifi::Flow.processGroups
+      #     rescue =>e
+      #     end
+      #     pgs.nil? ? '' : pgs
+      #   end
+      # end
 
       return nil
     end
@@ -99,8 +108,8 @@ module Nifi
 
   module Flow
     def self.processGroups
-      cert_path = Facter.value(:nifi_initial_admin_cert)
-      cert_key = Facter.value(:nifi_initial_admin_key)
+      cert_path = Facter.value(:nifi_initial_admin_cert_path)
+      cert_key = Facter.value(:nifi_initial_admin_key_path)
       https_host = Facter.value(:nifi_https_host)
       https_port = Facter.value(:nifi_https_port)
       if cert_path.nil? or cert_key.nil? or https_host.nil? or https_port.nil?
@@ -111,7 +120,7 @@ module Nifi
         return nil
       end
 
-      cmd = %Q{curl -k --cert #{cert_path}  --key #{cert_key} -X GET  https://#{https_host}:#{https_port}/nifi-api/process-groups/root -H 'cache-control: no-cache'}
+      cmd = %Q{curl -s -k --cert #{cert_path}  --key #{cert_key} -X GET  https://#{https_host}:#{https_port}/nifi-api/process-groups/root -H 'cache-control: no-cache'}
       result = Facter::Util::Resolution.exec(cmd)
 
       all_pg=[]
@@ -123,18 +132,18 @@ module Nifi
           'name' => root_json['component']['name']
         }
         all_pg.push(data)
-        others = Nifi::Flow.navigatProcessGroups(root_id)
+        others = Nifi::Flow.navigateProcessGroups(root_id)
         all_pg.concat(others)
       end
       return all_pg.to_s
     end
 
-    def self.navigatProcessGroups(pg_id)
-      cert_path = Facter.value(:nifi_initial_admin_cert)
-      cert_key = Facter.value(:nifi_initial_admin_key)
+    def self.navigateProcessGroups(pg_id)
+      cert_path = Facter.value(:nifi_initial_admin_cert_path)
+      cert_key = Facter.value(:nifi_initial_admin_key_path)
       https_host = Facter.value(:nifi_https_host)
       https_port = Facter.value(:nifi_https_port)
-      cmd = %Q{curl -k --cert #{cert_path}  --key #{cert_key} -X GET  https://#{https_host}:#{https_port}/nifi-api/process-groups/#{pg_id}/process-groups -H 'cache-control: no-cache'}
+      cmd = %Q{curl -s -k --cert #{cert_path}  --key #{cert_key} -X GET  https://#{https_host}:#{https_port}/nifi-api/process-groups/#{pg_id}/process-groups -H 'cache-control: no-cache'}
       result = Facter::Util::Resolution.exec(cmd)
       all_pg=[]
       if ! result.nil?
@@ -158,8 +167,8 @@ module Nifi
       return all_pg
     end
     def self.rootProcessGroup
-      cert_path = Facter.value(:nifi_initial_admin_cert)
-      cert_key = Facter.value(:nifi_initial_admin_key)
+      cert_path = Facter.value(:nifi_initial_admin_cert_path)
+      cert_key = Facter.value(:nifi_initial_admin_key_path)
       https_host = Facter.value(:nifi_https_host)
       https_port = Facter.value(:nifi_https_port)
 
@@ -167,7 +176,7 @@ module Nifi
         return nil
       end
 
-      cmd = %Q{curl -k --cert #{cert_path}  --key #{cert_key} -X GET  https://#{https_host}:#{https_port}/nifi-api/process-groups/root -H 'cache-control: no-cache'}
+      cmd = %Q{curl -s -k --cert #{cert_path}  --key #{cert_key} -X GET  https://#{https_host}:#{https_port}/nifi-api/process-groups/root -H 'cache-control: no-cache'}
 
       # url = "https://#{https_host}:#{https_port}/nifi-api/process-groups/root"
       # http = Nifi::Http.get_http(url, cert_path, cert_key)
@@ -204,7 +213,7 @@ module Nifi
           'id' => root_json['id'],
           'name' => root_json['component']['name']
         }
-        return data.to_s
+        return data.to_json
       end
 
     end

@@ -19,4 +19,10 @@ Puppet::Type.newtype(:nifi_permission) do
       end
     end
   end
+
+  newparam(:require_cluster) do
+    defaultto true
+    newvalues(true, false)
+  end
+
 end

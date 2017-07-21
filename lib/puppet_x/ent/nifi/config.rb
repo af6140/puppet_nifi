@@ -5,8 +5,12 @@ module Ent
         if @config.nil?
           @config = {}
           @config[:url] = url
-          @config[:cert] = OpenSSL::X509::Certificate.new(File.read(cert_path))
-          @config[:key] = OpenSSL::PKey::RSA.new(File.read(key_path))
+          if cert_path
+            @config[:cert] = OpenSSL::X509::Certificate.new(File.read(cert_path))
+          end
+          if(key_path)
+            @config[:key] = OpenSSL::PKey::RSA.new(File.read(key_path))
+          end
         end
       end
 

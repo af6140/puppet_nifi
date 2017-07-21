@@ -74,7 +74,6 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
     end
 
     existing_policy = get_policy(policy_action, policy_resource)
-    policy_id = existing_policy['id']
 
     if existing_policy.nil?
       tenant_entry = {
@@ -149,6 +148,7 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
       end
       Ent::Nifi::Rest.create('policies', JSON.parse(request_json))
     else
+      policy_id = existing_policy['id']
       #policy exists now update permssion
       tenant_entry = {
         "revision" => {

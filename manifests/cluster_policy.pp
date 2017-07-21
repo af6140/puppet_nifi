@@ -21,7 +21,6 @@ class nifi::cluster_policy(
   notify{"${root_pg}": }
   if $root_pg {
     $root_pg_id = $root_pg['id']
-    notify {"${root_pg_id}": }
     nifi_permission { "data/process-groups/${root_pg_id}:read:group:cluster_nodes":
       ensure => 'present'
     }
@@ -37,8 +36,6 @@ class nifi::cluster_policy(
 
     if $cluster_members {
       each($cluster_members)  |$member_node| {
-
-        notify {"${member_node}": }
         nifi_user {$member_node:
           ensure => 'present',
           groups => 'cluster_nodes'

@@ -97,8 +97,6 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
             "revision": {
               "version": 0
             },
-            "id": null,
-            "uri": null,
             "position": {
               "x": 0.0,
               "y": 0.0
@@ -107,10 +105,7 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
               "canRead": true,
               "canWrite": true
             },
-            "generated": "false",
             "component": {
-              "id": "",
-              "parentGroupId": "",
               "resource": "#{policy_resource}",
               "action": "#{policy_action}",
               "users": [#{tenant_entry_json}],
@@ -124,8 +119,6 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
             "revision": {
               "version": 0
             },
-            "id": null,
-            "uri": null,
             "position": {
               "x": 0.0,
               "y": 0.0
@@ -134,10 +127,7 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
               "canRead": true,
               "canWrite": true
             },
-            "generated": "false",
             "component": {
-              "id": "",
-              "parentGroupId": "",
               "resource": "#{policy_resource}",
               "action": "#{policy_action}",
               "users": [],

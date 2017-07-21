@@ -8,12 +8,6 @@ class nifi::admin_policy(
   nifi_permission {"flow:read:group:${admin_group}":
     ensure => 'present'
   }
-  nifi_permission {"flow:write:group:${admin_group}":
-    ensure => 'present'
-  }
-
-
-
   nifi_permission {"tenants:read:group:${admin_group}":
     ensure => 'present'
   }
@@ -45,7 +39,7 @@ class nifi::admin_policy(
   nifi_permission {"system:read:group:${admin_group}":
     ensure => 'present'
   }
-  nifi_permission {"counter:read:group:${admin_group}":
+  nifi_permission {"counters:read:group:${admin_group}":
     ensure => 'present'
   }
 

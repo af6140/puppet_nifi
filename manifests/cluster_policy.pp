@@ -8,7 +8,7 @@ class nifi::cluster_policy(
   nifi_permission {"controller:read:group:cluster_nodes":
     ensure => 'present'
   }
-  nifi_permission {"proxy:read:group:cluster_nodes":
+  nifi_permission {"proxy:write:group:cluster_nodes":
     ensure => 'present'
   }
   nifi_permission {"site-to-site:read:group:cluster_nodes":

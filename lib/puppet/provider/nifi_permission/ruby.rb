@@ -117,7 +117,7 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
               "userGroups": []
             }
           }
-      }
+        }
       else
         request_json = %Q{
           {

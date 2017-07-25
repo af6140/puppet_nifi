@@ -194,6 +194,55 @@ describe 'nifi' do
         end
       end
 
+
+      context "on #{os} with cluster config, implicit ssl config" do
+        let(:facts) do
+          facts[:concat_basedir] = '/tmp'
+          facts
+        end
+
+        let(:params) {
+          {
+            :config_ssl  => true,
+            :config_cluster => true,
+            :cacert_path => '/etc/pki/certs/ca.pem',
+            :node_cert_path => '/etc/pki/certs/node.pem',
+            :node_private_key_path => '/etc/pki/keys/node_key.pem',
+            :initial_admin_identity => 'nifi-admin',
+            :initial_admin_cert_path => '/etc/pki/certs/nifi_admin.pem',
+            :initial_admin_key_path => '/etc/pki/keys/nifi_amdin.key',
+            :keystore_password => 'changeit',
+            :key_password => 'secret',
+            :client_auth => true,
+            :cluster_members => cluster_members,
+            :cluster_identities => cluster_identities,
+            :embedded_zookeeper => false,
+            :external_zookeeper_connect_string => 'zookeeper-1:2181'
+          }
+        }
+
+
+        context "nifi class with external zookeeper" do
+          it { is_expected.to compile.with_all_deps }
+
+          it { is_expected.to contain_class('nifi::params') }
+          it { is_expected.to contain_class('nifi::install').that_comes_before('nifi::config') }
+          it { is_expected.to contain_class('nifi::config') }
+          it { is_expected.to contain_class('nifi::service').that_subscribes_to('nifi::config') }
+
+          it { is_expected.to contain_service('nifi') }
+          it { is_expected.to contain_package('nifi') }
+
+
+          it { is_expected.to contain_nifi__cluster_state_provider('cluster_state_provider') }
+          it { is_expected.to contain_concat__fragment('frag_cluster_state_provider').with_content(/"Connect String">zookeeper-1:2181/) }
+
+          it { is_expected.to contain_concat__fragment('frag_authorizer_file-provider')
+                                .with_content(/<property name="Node Identity 1">nifi-as01a\.dev<\/property>/)
+          }
+        end
+      end
+
     end
   end
 

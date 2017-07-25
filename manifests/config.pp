@@ -113,14 +113,21 @@ class nifi::config(
 
   if $nifi::config_cluster and ! empty($::nifi::cluster_members) {
     $real_config_cluster = true
-    nifi::embedded_zookeeper { "nifi_zookeeper_config":
-      members => $nifi::cluster_members,
-      ids => $nifi::cluster_zookeeper_ids,
+
+
+    if $::nifi::embedded_zookeeper {
+      nifi::embedded_zookeeper { "nifi_zookeeper_config":
+        members => $nifi::cluster_members,
+        ids => $nifi::cluster_zookeeper_ids,
+      }
+
+      $zookeeper_connect_string = join(suffix($nifi::cluster_members, ':2181'), ',')
+
+    }else {
+      $zookeeper_connect_string = $::nifi::external_zookeeper_connect_string
     }
 
-    $zookeeper_connect_string = join(suffix($nifi::cluster_members, ':2181'), ',')
-
-    #cluster talkes to all embedded zookeeper
+    #cluster talkes to all embedded zookeeper or external one
     nifi::cluster_state_provider {'cluster_state_provider':
       provider_properties => {
         'connect_string' => $zookeeper_connect_string
@@ -144,7 +151,7 @@ class nifi::config(
       'nifi.cluster.node.protocol.port' => '9999',
       'nifi.cluster.node.event.history.size'=> '100',
       'nifi.zookeeper.connect.string' => $real_zookeeper_connect_string,
-      'nifi.state.management.embedded.zookeeper.start' => 'true',
+      'nifi.state.management.embedded.zookeeper.start' => "${nifi::embedded_zookeeper}", # start embedded zookeeper or not
       'nifi.remote.input.host' => $::fqdn,
       'nifi.remote.input.socket.port' => '9998',
       'nifi.cluster.flow.election.max.candidates' => $max_candidates,

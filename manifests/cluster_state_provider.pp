@@ -36,7 +36,6 @@ define nifi::cluster_state_provider (
   $flat_tmp = flatten($tmp)
 
   $normalized_cluster_provider_properties = hash($flat_tmp)
-
   concat::fragment { "frag_cluster_state_provider":
     order   => '03',
     target  => '/opt/nifi/conf/state-management.xml',

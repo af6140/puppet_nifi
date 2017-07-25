@@ -43,7 +43,9 @@ class nifi (
   Integer[1024] $web_http_port = $::nifi::params::web_http_port,
   Integer[1024] $web_https_port = $::nifi::params::web_https_port,
   String[1] $provenance_storage_time = "24 hours",
-  String[1] $provenance_storage_size = "1 GB"
+  String[1] $provenance_storage_size = "1 GB",
+  Boolean $embedded_zookeeper = true,
+  Optional[String[1]] $external_zookeeper_connect_string = undef
 ) inherits ::nifi::params {
 
   package {'rubygem-rest-client':

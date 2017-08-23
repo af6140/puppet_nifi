@@ -42,6 +42,9 @@ class nifi::admin_policy(
   nifi_permission {"counters:read:group:${admin_group}":
     ensure => 'present'
   }
+  nifi_permission {"system-diagnostics:read:group:${admin_group}":
+    ensure => 'present'
+  }
 
   if $::nifi_root_process_group {
     $root_pg = parsejson($::nifi_root_process_group)

@@ -106,7 +106,7 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
               "canWrite": true
             },
             "component": {
-              "resource": "#{policy_resource}",
+              "resource": "/#{policy_resource}",
               "action": "#{policy_action}",
               "users": [#{tenant_entry_json}],
               "userGroups": []
@@ -128,7 +128,7 @@ Puppet::Type.type(:nifi_permission).provide(:ruby, :parent=> Puppet::Provider::N
               "canWrite": true
             },
             "component": {
-              "resource": "#{policy_resource}",
+              "resource": "/#{policy_resource}",
               "action": "#{policy_action}",
               "users": [],
               "userGroups": [#{tenant_entry_json}]

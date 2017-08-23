@@ -42,24 +42,28 @@ class nifi::admin_policy(
   nifi_permission {"counters:read:group:${admin_group}":
     ensure => 'present'
   }
-
-  $root_pg = parsejson($::nifi_root_process_group)
-  if $root_pg {
-    $root_pg_id = $root_pg['id']
-    nifi_permission {"data/process-groups/${root_pg_id}:read:group:${admin_group}":
-      ensure => 'present'
-    }
-    nifi_permission {"data/process-groups/${root_pg_id}:write:group:${admin_group}":
-      ensure => 'present'
-    }
-
-    nifi_permission {"process-groups/${root_pg_id}:read:group:${admin_group}":
-      ensure => 'present'
-    }
-    nifi_permission {"process-groups/${root_pg_id}:write:group:${admin_group}":
-      ensure => 'present'
-    }
-
+  nifi_permission {"system-diagnostics:read:group:${admin_group}":
+    ensure => 'present'
   }
 
+  if $::nifi_root_process_group {
+    $root_pg = parsejson($::nifi_root_process_group)
+    if $root_pg {
+      $root_pg_id = $root_pg['id']
+      nifi_permission { "data/process-groups/${root_pg_id}:read:group:${admin_group}":
+        ensure => 'present'
+      }
+      nifi_permission { "data/process-groups/${root_pg_id}:write:group:${admin_group}":
+        ensure => 'present'
+      }
+
+      nifi_permission { "process-groups/${root_pg_id}:read:group:${admin_group}":
+        ensure => 'present'
+      }
+      nifi_permission { "process-groups/${root_pg_id}:write:group:${admin_group}":
+        ensure => 'present'
+      }
+
+    }
+  }
 }

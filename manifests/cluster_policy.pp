@@ -18,8 +18,8 @@ class nifi::cluster_policy(
   nifi_permission {"provenance:read:group:${cluster_group}":
     ensure => 'present'
   }
-  $root_pg = parsejson($::nifi_root_process_group)
-  notify{"${root_pg}": }
+  $root_pg = parsejson($::nifi_root_process_group, undef)
+  notify{"root_pg: ${root_pg}": }
   if $root_pg {
     $root_pg_id = $root_pg['id']
     nifi_permission { "data/process-groups/${root_pg_id}:read:group:${cluster_group}":
@@ -43,7 +43,5 @@ class nifi::cluster_policy(
         }
       }
     }
-  } else {
-
   }
 }

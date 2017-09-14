@@ -15,7 +15,7 @@ define nifi::custom_properties (
     ensure => 'present',
     owner => 'nifi',
     group => 'nifi',
-    mode => '0644',
+    mode => '0600',
     content => $real_content,
     notify => Service['nifi']
   }

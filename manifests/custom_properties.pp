@@ -5,7 +5,7 @@ define nifi::custom_properties (
 
   if $properties {
     assert_type(Hash[String,String], $properties)
-    $nifi_custom_properteis = $properties
+    $nifi_custom_properties = $properties
     $real_content = template('nifi/custom.properties.erb')
   }else {
     $real_content = ''

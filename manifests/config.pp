@@ -11,7 +11,6 @@ class nifi::config(
 
   notify {"nifi package version :${nifi_cal_version}":
     message => '',
-    noop=> true
   }
 
   ##bootstrap jvm customization

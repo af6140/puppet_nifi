@@ -23,7 +23,8 @@ describe 'nifi' do
             :cluster_members => %w(nifi-as01a.dev nifi-as02a.dev nif-as03a.dev),
             :id_mappings => id_mappings,
             :nifi_properties => {
-              '###nif_test_property###' => 'here'
+              '###nif_test_property###' => 'here',
+              'nifi_sensitive_prop_key' => 'abcdefg'
             }
           }
         }

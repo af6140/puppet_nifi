@@ -96,7 +96,7 @@ describe  provider_class do
         }
         before :each do
 
-          stub_request(:get, "https://nifi-test:8443/nifi-api/flow/cluster/summary").
+          stub_request(:get, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/flow/cluster/summary").
             with(:headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
             to_return(:status => 200, :body => cluster_summary, :headers => {})
 
@@ -175,7 +175,7 @@ describe  provider_class do
         before :each do
           #puts provider.pretty_inspect
           #provider.stubs(:java).with('-version').returns('9')
-          stub_request(:get, "https://nifi-test:8443/nifi-api/flow/cluster/summary").
+          stub_request(:get, "https://#{nifi_https_host}:#{nifi_https_port}/nifi-api/flow/cluster/summary").
             with(:headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
             to_return(:status => 200, :body => cluster_summary, :headers => {})
 

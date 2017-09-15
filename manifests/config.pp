@@ -210,6 +210,7 @@ class nifi::config(
 
   $active_properties = deep_merge($::nifi::params::nifi_properties, $tmp_provenance_properties,  $normaized_config_properties, $file_location_properties, $nifi_cluster_configs)
 
+  #notify { "general config: ${active_properties}":}
   nifi::config_properties {'nifi_general_configs':
     properties => $active_properties
   }

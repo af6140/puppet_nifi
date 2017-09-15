@@ -50,9 +50,6 @@ class nifi (
     ensure => 'present'
   }
 
-  notify{"initial admin identity: ${initial_admin_identity}":
-    message => "${initial_admin_identity}",
-  }
 
   if($config_cluster) {
     $count_of_nodes = size($cluster_members)

@@ -102,13 +102,9 @@ class nifi (
     value => $::nifi::initial_admin_key_path
   }
 
-  stage { 'last': }
-
-  Stage['main'] -> Stage['last']
-
   class { '::nifi::install': } ->
-  class { '::nifi::config': } ~>
+  class { '::nifi::config': } ->
   class { '::nifi::service':
-    stage => 'last'
+
   }
 }

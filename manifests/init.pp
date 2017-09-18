@@ -64,11 +64,6 @@ class nifi (
     }
   }
 
-  class { '::nifi::install': } ->
-  class { '::nifi::config': } ~>
-  class { '::nifi::service': } ->
-  Class['::nifi']
-
 
   file {"${::nifi::nifi_conf_dir}/logback.xml":
     ensure => 'present',
@@ -105,5 +100,15 @@ class nifi (
   nifi::extfact{'nifi_initial_admin_key':
     key => 'nifi_initial_admin_key_path',
     value => $::nifi::initial_admin_key_path
+  }
+
+  stage { 'last': }
+
+  Stage['main'] -> Stage['last']
+
+  class { '::nifi::install': } ->
+  class { '::nifi::config': } ~>
+  class { '::nifi::service':
+    stage => 'last'
   }
 }

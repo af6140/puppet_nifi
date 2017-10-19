@@ -34,6 +34,7 @@ class nifi::config(
     group => 'nifi',
     mode => '0644',
     ensure_newline => true,
+    notify => Service[$::nifi::service::name],
   }
   concat::fragment{ 'id_provider_start':
     order => '01',
@@ -77,7 +78,8 @@ class nifi::config(
         pattern => $entry['pattern'],
         value => $entry['value'],
         index => $real_index,
-        ensure => $real_ensure
+        ensure => $real_ensure,
+        notify => Service[$::nifi::service::name],
       }
     }
   }
@@ -89,6 +91,7 @@ class nifi::config(
     group => 'nifi',
     mode => '0644',
     ensure_newline => true,
+    notify => Service[$::nifi::service::name],
   }
   concat::fragment{ 'state_provider_start':
     order => '01',
@@ -217,6 +220,7 @@ class nifi::config(
     group => 'nifi',
     mode => '0644',
     ensure_newline => true,
+    notify => Service[$::nifi::service::name],
   }
   concat::fragment{ 'authorizers_start':
     order => '01',

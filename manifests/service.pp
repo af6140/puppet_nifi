@@ -9,6 +9,5 @@ class nifi::service {
     enable     => true,
     hasstatus  => true,
     hasrestart => true,
-    subscribe => Class['::nifi::config']
   }
 }

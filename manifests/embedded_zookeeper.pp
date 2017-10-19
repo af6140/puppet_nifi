@@ -37,7 +37,7 @@ define nifi::embedded_zookeeper (
             owner   => 'nifi',
             group   => 'nifi',
             mode    => '0644',
-            notify => Service[$::nifi::service::name],
+            notify => Service[$::nifi::service_name],
           }
       }
     }
@@ -52,6 +52,6 @@ define nifi::embedded_zookeeper (
     group   => 'nifi',
     mode    => '644',
     content => template('nifi/zookeeper.properties.erb'),
-    notify => Service[$::nifi::service::name],
+    notify => Service[$::nifi::service_name],
   }
 }

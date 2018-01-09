@@ -45,7 +45,7 @@ class nifi::install {
 
   file {'/usr/lib/tmpfiles.d/nifi.conf':
    ensure => 'present',
-   content => 'd /var/run/nifi 0755 nifi nifi -',
+   content => 'd /run/nifi 0755 nifi nifi -',
    mode => '0644',
    require => User['nifi']
   }

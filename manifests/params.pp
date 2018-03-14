@@ -22,22 +22,30 @@ class nifi::params {
   $initial_admin_identity = 'nifi-admin'
   $web_http_port = 8080
   $web_https_port = 8443
+
+  # core properties https://community.hortonworks.com/articles/7882/hdfnifi-best-practices-for-setting-up-a-high-perfo.html
   $nifi_properties ={
     'nifi.flow.configuration.file' => '/opt/nifi/flow/flow.xml.gz',
+    'nifi.flow.configuration.archive.dir' => '/opt/nifi/conf/archive/',
+    'nifi.flow.configuration.archive.enabled' => 'true',
+    'nifi.flow.configuration.archive.max.time' => '30 days',
     'nifi.templates.directory'=> '/opt/nifi/flow/templates',
     'nifi.variable.registry.properties' => '/opt/nifi/flow/custom.properties',
     'nifi.web.http.host' => $::fqdn,
     'nifi.web.https.host' => $::fqdn,
     'nifi.security.user.authorizer' => 'file-provider',
     'nifi.cluster.is.node' => 'false',
-    'nifi.flow.configuration.archive.dir' => '/opt/nifi/conf/archive/',
     'nifi.authorizer.configuration.file' => '/opt/nifi/conf/authorizers.xml',
     'nifi.login.identity.provider.configuration.file ' => '/opt/nifi/conf/login-identity-providers.xml',
     'nifi.state.management.configuration.file' => '/opt/nifi/conf/state-management.xml',
     'nifi.state.management.embedded.zookeeper.properties' => '/opt/nifi/conf/zookeeper.properties',
     'nifi.nar.working.directory' => '/opt/nifi/work/nar/',
     'nifi.documentation.working.directory' => '/opt/nifi/work/docs/components',
-    'nifi.web.jetty.working.directory' => '/opt/nifi/work/jetty'
+    'nifi.web.jetty.working.directory' => '/opt/nifi/work/jetty',
+    'nifi.flowcontroller.graceful.shutdown.period' => '20 sec',
+    'nifi.bored.yield.duration' => '30 millis',
+    'nifi.administrative.yield.duration' => '30 sec',
+    'nifi.flowservice.writedelay.interval' => '500 ms'
   }
   $flow_election_max_candidates = 2
 

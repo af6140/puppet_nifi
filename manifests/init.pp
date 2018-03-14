@@ -43,7 +43,9 @@ class nifi (
   Integer[1024] $web_http_port = $::nifi::params::web_http_port,
   Integer[1024] $web_https_port = $::nifi::params::web_https_port,
   String[1] $provenance_storage_time = "24 hours",
-  String[1] $provenance_storage_size = "1 GB"
+  String[1] $provenance_storage_size = "1 GB",
+  Boolean $enable_jolokia = false,
+  Optional[String[1]] $jolokia_agent_path = undef,
 ) inherits ::nifi::params {
 
   package {'rubygem-rest-client':
@@ -102,9 +104,13 @@ class nifi (
     value => $::nifi::initial_admin_key_path
   }
 
-  class { '::nifi::install': } ->
-  class { '::nifi::config': } ->
-  class { '::nifi::service':
+  # class { '::nifi::install': } ->
+  # class { '::nifi::config': } ->
+  # class { '::nifi::service':
+  # }
+  include '::nifi::install'
+  include '::nifi::config'
+  include '::nifi::service'
 
-  }
+  Class['::nifi::install'] -> Class['::nifi::config'] ~> Class['::nifi::service']
 }

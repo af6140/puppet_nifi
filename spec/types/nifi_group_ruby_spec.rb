@@ -49,10 +49,10 @@ describe  provider_class do
       context 'create new group' do
         let(:resource) {
           Puppet::Type.type(:nifi_group).new({
-                                              :ensure=>'present',
-                                              :name => 'test',
-                                              :provider => 'ruby'
-                                            })
+            :ensure=>'present',
+            :name => 'test',
+            :provider => 'ruby'
+          })
         }
         let(:provider) { #described_class.new(resource)
           resource.provider

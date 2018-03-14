@@ -15,11 +15,31 @@ class nifi::config(
   $minHeapArgs = "-Xms${::nifi::min_heap}"
   $maxHeapArgs = "-Xmx${::nifi::max_heap}"
 
-  $bootstrap_properties = {
-    'java.arg.2' => $minHeapArgs,
-    'java.arg.3' => $maxHeapArgs,
-    'java.arg.8' => "-XX:CodeCacheMinimumFreeSpace=10m",
-    'java.arg.9' => "-XX:+UseCodeCacheFlushing",
+  if $::nifi::enable_jolokia and $::nifi::jolokia_agent_path {
+    file { "${::nifi::nifi_conf_dir}/jolokia_access.xml":
+      ensure => 'present',
+      owner => 'nifi',
+      group => 'nifi',
+      content => template('nifi/jolokia_access.xml.erb')
+    }
+    $properties_require = [File["${::nifi::nifi_conf_dir}/jolokia_access.xml"]]
+    $bootstrap_properties = {
+      'java.arg.2' => $minHeapArgs,
+      'java.arg.3' => $maxHeapArgs,
+      'java.arg.8' => "-XX:CodeCacheMinimumFreeSpace=10m",
+      'java.arg.9' => "-XX:+UseCodeCacheFlushing",
+      'java.arg.13'=> '-XX:+UseG1GC',
+      'java.arg.11'=> "-javaagent:${::nifi::jolokia_agent_path}=config=/path/to/config.properties"
+    }
+  }else {
+    $bootstrap_properties = {
+      'java.arg.2' => $minHeapArgs,
+      'java.arg.3' => $maxHeapArgs,
+      'java.arg.8' => "-XX:CodeCacheMinimumFreeSpace=10m",
+      'java.arg.9' => "-XX:+UseCodeCacheFlushing",
+      'java.arg.13'=> '-XX:+UseG1GC',
+    }
+    $properties_require = []
   }
 
   nifi::bootstrap_properties { 'bootstrap_jvm_conf':
@@ -27,7 +47,7 @@ class nifi::config(
   }
 
   # login provider configuration
-  concat {'/opt/nifi/conf/login-identity-providers.xml':
+  concat {"${::nifi::nifi_conf_dir}/login-identity-providers.xml":
     ensure => 'present',
     warn => false,
     owner => 'nifi',
@@ -38,13 +58,13 @@ class nifi::config(
   }
   concat::fragment{ 'id_provider_start':
     order => '01',
-    target => '/opt/nifi/conf/login-identity-providers.xml',
+    target => "${::nifi::nifi_conf_dir}/login-identity-providers.xml",
     content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<!--\nThis file is managed by Puppet. DO NOT EDIT\n-->\n<loginIdentityProviders>\n"
   }
 
   concat::fragment{ 'id_provider_end':
     order => '99',
-    target => '/opt/nifi/conf/login-identity-providers.xml',
+    target => "${::nifi::nifi_conf_dir}/login-identity-providers.xml",
     content => "\n</loginIdentityProviders>"
   }
 
@@ -84,7 +104,7 @@ class nifi::config(
     }
   }
   #manage state-management-xml
-  concat {'/opt/nifi/conf/state-management.xml':
+  concat {"${::nifi::nifi_conf_dir}/state-management.xml":
     ensure => 'present',
     warn => false,
     owner => 'nifi',
@@ -95,13 +115,13 @@ class nifi::config(
   }
   concat::fragment{ 'state_provider_start':
     order => '01',
-    target => '/opt/nifi/conf/state-management.xml',
+    target => "${::nifi::nifi_conf_dir}/state-management.xml",
     content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<!--\nThis file is managed by Puppet. DO NOT EDIT\n-->\n<stateManagement>\n"
   }
 
   concat::fragment{ 'state_provider_end':
     order => '99',
-    target => '/opt/nifi/conf/state-management.xml',
+    target => "${::nifi::nifi_conf_dir}/state-management.xml",
     content => "\n</stateManagement>"
   }
   #local provider always exists
@@ -208,12 +228,14 @@ class nifi::config(
 
   $active_properties = deep_merge($::nifi::params::nifi_properties, $tmp_provenance_properties,  $normaized_config_properties, $file_location_properties, $nifi_cluster_configs)
 
+  #Generate configuration file
   #notify { "general config: ${active_properties}":}
   nifi::config_properties {'nifi_general_configs':
-    properties => $active_properties
+    properties => $active_properties,
+    require => $properties_require,
   }
   #manage authorizer
-  concat {'/opt/nifi/conf/authorizers.xml':
+  concat {"${::nifi::nifi_conf_dir}/authorizers.xml":
     ensure => 'present',
     warn => false,
     owner => 'nifi',
@@ -224,13 +246,13 @@ class nifi::config(
   }
   concat::fragment{ 'authorizers_start':
     order => '01',
-    target => '/opt/nifi/conf/authorizers.xml',
+    target => "${::nifi::nifi_conf_dir}/authorizers.xml",
     content => "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<!--\nThis file is managed by Puppet. DO NOT EDIT\n-->\n<authorizers>"
   }
 
   concat::fragment{ 'authorizers_end':
     order => '99',
-    target => '/opt/nifi/conf/authorizers.xml',
+    target => "${::nifi::nifi_conf_dir}/authorizers.xml",
     content => "\n</authorizers>"
   }
 

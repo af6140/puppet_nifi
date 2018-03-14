@@ -145,6 +145,45 @@ describe 'nifi' do
 
       end
 
+      context "on #{os} without cluster config, with ssl config and jolokia" do
+        let(:facts) do
+          facts[:concat_basedir] = '/tmp'
+          facts[:fqdn] = 'nifi-as01a.dev'
+          facts
+        end
+
+        let(:params) {
+          {
+            :config_cluster => false,
+            :config_ssl => true,
+            :cacert_path => '/etc/pki/certs/ca.pem',
+            :node_cert_path => '/etc/pki/certs/node.pem',
+            :node_private_key_path => '/etc/pki/keys/node_key.pem',
+            :initial_admin_identity => 'nifi-admin',
+            :initial_admin_cert_path => '/etc/pki/certs/nifi_admin.pem',
+            :initial_admin_key_path => '/etc/pki/keys/nifi_amdin.key',
+            :keystore_password => 'changeit',
+            :key_password => 'secret',
+            :client_auth => true,
+            :enable_jolokia => true,
+            :jolokia_agent_path => '/var/lib/jolokia/jolokia_agent.jar'
+          }
+        }
+        it { is_expected.to compile.with_all_deps }
+
+        it { is_expected.to contain_service('nifi') }
+
+
+        #testing security setup
+        it { is_expected.to contain_nifi__security('nifi_properties_security_setting') }
+        it { is_expected.to contain_java_ks('nifi_keystore:nifi-as01a.dev') }
+        it { is_expected.to contain_java_ks('nifi_truststore:ca') }
+
+
+        it { is_expected.to contain_file('/opt/nifi/conf/jolokia_access.xml') }
+
+      end
+
 
       context "on #{os} with cluster config, implicit ssl config" do
         let(:facts) do
@@ -193,6 +232,7 @@ describe 'nifi' do
                                 .with_content(/<property name="Node Identity 1">nifi-as01a\.dev<\/property>/)
           }
         end
+
       end
 
     end

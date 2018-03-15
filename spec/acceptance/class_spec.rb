@@ -6,13 +6,13 @@ describe 'nifi class' do
     it 'should work idempotently with no errors' do
       pp = <<-EOS
       class { 'nifi':
-        config_ssl => false 
+        config_ssl => false
       }
       EOS
 
       # Run it twice and test for idempotency
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes  => true)
+      apply_manifest(pp, :catch_failures => true, :strict_variables=> true, :future_parser=>true)
+      apply_manifest(pp, :catch_changes  => true, :strict_variables=> true, :future_parser=>true)
     end
 
   end

@@ -1,0 +1,5 @@
+[puppetlabs-3]
+name=Puppet 3 el 7 - $basearch
+baseurl=https://yum.puppetlabs.com/el/7/products/$basearch
+enabled=1
+gpgcheck=0

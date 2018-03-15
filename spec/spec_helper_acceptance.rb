@@ -38,11 +38,9 @@ RSpec.configure do |c|
 
   # Configure all nodes in nodeset
   c.before :suite do
-
-
-
     # Install module and dependencies
-    puppet_module_install(:source => proj_root, :module_name => 'nifi', :target_module_path=>'/etc/puppetlabs/code/environments/production/modules')
+    #puppet_module_install(:source => proj_root, :module_name => 'nifi', :target_module_path=>'/etc/puppetlabs/code/environments/production/modules')
+    puppet_module_install(:source => proj_root, :module_name => 'nifi', :target_module_path=>'/etc/puppet/modules')
     master = ''
     begin
       master = only_host_with_role(hosts, 'master')
@@ -62,6 +60,8 @@ RSpec.configure do |c|
         on host, "cat /root/.ssh/config"
       end
 
+      on host, 'rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm'
+
       #use internal ca cert
       scp_to host, "#{proj_root}/spec/fixtures/ent_ca.crt", "/etc/pki/ca-trust/source/anchors"
       on host, "update-ca-trust extract"
@@ -80,7 +80,6 @@ RSpec.configure do |c|
                 'strict_variables' => 'true',
             }
         }
-
 
         #work around issue host[:hieradatadir] not set when BEAKER_provision=no
         host[:hieradatadir] = '/etc/puppet/hieradata' unless host[:hieradatadir]

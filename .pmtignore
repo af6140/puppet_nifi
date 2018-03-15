@@ -13,3 +13,5 @@ Gemfile.lock
 Guardfile
 Rakefile
 log
+junit
+.idea

@@ -5,7 +5,7 @@ define nifi::extfact(
 
   file_line {"nifi_extfact_$key":
     ensure => present,
-    path => '/etc/facter/facts.d/nifi.txt',
+    path => "${::nifi::external_fact_dir}/facts.d/nifi.txt",
     line => "${key}=${value}",
     match => "^${key}=",
   }

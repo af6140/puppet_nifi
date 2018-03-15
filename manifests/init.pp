@@ -46,6 +46,7 @@ class nifi (
   String[1] $provenance_storage_size = "1 GB",
   Boolean $enable_jolokia = false,
   Optional[String[1]] $jolokia_agent_path = undef,
+  String[1] $external_fact_dir = "/etc/facter"
 ) inherits ::nifi::params {
 
   package {'rubygem-rest-client':
@@ -77,7 +78,19 @@ class nifi (
   }
 
   #static configuration facts
-  file {'/etc/facter/facts.d/nifi.txt':
+  file {$external_fact_dir:
+    ensure => 'directory',
+    owner => 'root',
+    group => 'root',
+    mode => '0644'
+  } ->
+  file {"${external_fact_dir}/facts.d":
+    ensure => 'directory',
+    owner => 'root',
+    group => 'root',
+    mode => '0644'
+  } ->
+  file {"${external_fact_dir}/facts.d/nifi.txt":
     ensure => 'present',
     owner => 'root',
     group => 'root',

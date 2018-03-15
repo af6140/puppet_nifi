@@ -46,13 +46,21 @@ class nifi (
   String[1] $provenance_storage_size = "1 GB",
   Boolean $enable_jolokia = false,
   Optional[String[1]] $jolokia_agent_path = undef,
-  String[1] $external_fact_dir = "/etc/facter"
+  String[1] $external_fact_dir = "/etc/facter",
+  Boolean $start_service = false,
+  Boolean $restart_service = false,
 ) inherits ::nifi::params {
 
   package {'rubygem-rest-client':
     ensure => 'present'
   }
 
+  # only restart service when configured to do so
+  if $::nifi::start_service and  $::nifi::restart_service {
+    $service_notify = [Service[$::nifi::service_name]]
+  }else {
+    $service_notify = []
+  }
 
   if($config_cluster) {
     $count_of_nodes = size($cluster_members)
@@ -125,5 +133,5 @@ class nifi (
   include '::nifi::config'
   include '::nifi::service'
 
-  Class['::nifi::install'] -> Class['::nifi::config'] ~> Class['::nifi::service']
+  Class['::nifi::install'] -> Class['::nifi::config'] -> Class['::nifi::service']
 }

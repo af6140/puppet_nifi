@@ -14,7 +14,7 @@ define nifi::bootstrap_properties (
       incl => $path,
       changes => $changes,
       show_diff => true,
-      notify => Service[$::nifi::service_name],
+      notify => $::nifi::service_notify,
     }
   }
 }

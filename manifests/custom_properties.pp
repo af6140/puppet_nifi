@@ -17,6 +17,6 @@ define nifi::custom_properties (
     group => 'nifi',
     mode => '0600',
     content => $real_content,
-    notify => Service[$::nifi::service_name],
+    notify => $::nifi::service_notify,
   }
 }

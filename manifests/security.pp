@@ -73,7 +73,7 @@ define nifi::security(
       properties => $security_properties
     }
   }else {
-    
+
     $security_properties = {
       'nifi.security.keystore'          => '',
       'nifi.security.keystoreType'      => '',

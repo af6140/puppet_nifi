@@ -1,4 +1,4 @@
-FROM af6140/cent7-nifi:latest
+FROM af6140/cent7-nifi:1.2
 
 
 USER root

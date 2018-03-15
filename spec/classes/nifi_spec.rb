@@ -36,9 +36,9 @@ describe 'nifi' do
           it { is_expected.to contain_class('nifi::params') }
           it { is_expected.to contain_class('nifi::install').that_comes_before('nifi::config') }
           it { is_expected.to contain_class('nifi::config') }
-          it { is_expected.to contain_class('nifi::service').that_subscribes_to('nifi::config') }
+          it { is_expected.not_to contain_class('nifi::service').that_subscribes_to('nifi::config') }
 
-          it { is_expected.to contain_service('nifi') }
+          it { is_expected.not_to contain_service('nifi') }
           it { is_expected.to contain_package('nifi') }
 
           it { is_expected.to contain_concat('/opt/nifi/conf/login-identity-providers.xml') }
@@ -73,7 +73,8 @@ describe 'nifi' do
             :config_ssl => false,
             :ldap_provider_configs => {
               'manager_DN' => 'cn=nifibinding, ou=it, cn=example, cn=com'
-            }
+            },
+            :start_service => true,
           }
         }
         it { is_expected.to compile.with_all_deps }
@@ -129,7 +130,7 @@ describe 'nifi' do
         }
         it { is_expected.to compile.with_all_deps }
 
-        it { is_expected.to contain_service('nifi') }
+        it { is_expected.not_to contain_service('nifi') }
 
         #it { is_expected.to contain_nifi__ldap_provider('ldap_provider')}
 
@@ -171,7 +172,7 @@ describe 'nifi' do
         }
         it { is_expected.to compile.with_all_deps }
 
-        it { is_expected.to contain_service('nifi') }
+        it { is_expected.not_to contain_service('nifi') }
 
 
         #testing security setup
@@ -185,7 +186,7 @@ describe 'nifi' do
       end
 
 
-      context "on #{os} with cluster config, implicit ssl config" do
+      context "on #{os} with cluster config, implicit ssl config, and start/restart service" do
         let(:facts) do
           facts[:concat_basedir] = '/tmp'
           facts
@@ -206,6 +207,8 @@ describe 'nifi' do
             :client_auth => true,
             :cluster_members => cluster_members,
             :cluster_identities => cluster_identities,
+            :start_service => true,
+            :restart_service => true,
           }
         }
 
@@ -216,7 +219,6 @@ describe 'nifi' do
           it { is_expected.to contain_class('nifi::params') }
           it { is_expected.to contain_class('nifi::install').that_comes_before('nifi::config') }
           it { is_expected.to contain_class('nifi::config') }
-          it { is_expected.to contain_class('nifi::service').that_subscribes_to('nifi::config') }
 
           it { is_expected.to contain_service('nifi') }
           it { is_expected.to contain_package('nifi') }

@@ -16,8 +16,11 @@ USER root
 COPY puppet_3.repo /etc/yum.repos.d
 RUN rm -f /etc/yum.repos.d/puppetlabs* && \
     yum update -y && \
+    yum install -y nifi-docs && \
+    rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
     yum install -y openssh-server curl gcc git make rpm-build ruby ruby-devel tar sensu sudo which yum-plugin-versionlock && \
-    yum versionlock puppet* && \
+    yum install -y puppet-3.8.7 && \
+    yum versionlock puppet && \
     systemctl enable sshd && \
     echo "gem: --no-ri --no-rdoc" > /etc/gemrc && \
     yum clean all

@@ -4,8 +4,20 @@ define nifi::embedded_zookeeper (
   $client_port           = 2181
 ) {
 
-  if !empty($members) {
+  file { "${::nifi::nifi_home}/state":
+          ensure => 'directory',
+          owner  => 'nifi',
+          group  => 'nifi',
+          mode   => '0755'
+  } ->
+  file { "${::nifi::nifi_home}/state/zookeeper":
+    ensure => 'directory',
+    owner  => 'nifi',
+    group  => 'nifi',
+    mode   => '0755'
+  }
 
+  if !empty($members) {
     $members_array = $members.map |$index, $member| {
       $real_index = $ids[$index]
       ["server.${real_index}", "${member}:2888:3888"]
@@ -17,27 +29,15 @@ define nifi::embedded_zookeeper (
       $real_index = $ids[$index]
       #set zookeeper myid
       # echo $id > .state/zookeeper/myid
-
       if $::fqdn == $member {
-        file { "${::nifi::nifi_home}/state/":
-          ensure => 'directory',
-          owner  => 'nifi',
-          group  => 'nifi',
-          mode   => '0755'
-        } ->
-          file { "${::nifi::nifi_home}/state/zookeeper":
-            ensure => 'directory',
-            owner  => 'nifi',
-            group  => 'nifi',
-            mode   => '0755'
-          } ->
           file { "${::nifi::nifi_home}/state/zookeeper/myid":
             ensure  => 'present',
-            content => "$real_index",
+            content => "${real_index}",
             owner   => 'nifi',
             group   => 'nifi',
             mode    => '0644',
             notify => $::nifi::service_notify,
+            require => File["${::nifi::nifi_home}/state/zookeeper"],
           }
       }
     }
@@ -53,5 +53,6 @@ define nifi::embedded_zookeeper (
     mode    => '644',
     content => template('nifi/zookeeper.properties.erb'),
     notify => $::nifi::service_notify,
+    require => File["${::nifi::nifi_home}/state/zookeeper"]
   }
 }

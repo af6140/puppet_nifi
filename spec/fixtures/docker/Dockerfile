@@ -23,6 +23,15 @@ RUN rm -f /etc/yum.repos.d/puppetlabs* && \
     yum versionlock puppet && \
     systemctl enable sshd && \
     echo "gem: --no-ri --no-rdoc" > /etc/gemrc && \
+    echo "gem: --no-ri --no-rdoc" > /root/.gemrc && \
     yum clean all
 
-ENTRYPOINT ["/sbin/init"]
+VOLUME /certs
+VOLUME /modules
+
+WORKDIR /root
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

@@ -1,0 +1,13 @@
+FROM alpine:latest
+
+COPY spec/fixtures/docker/ssl/* /certs/
+RUN mkdir -p /modules/nifi
+COPY manifests /modules/nifi/manifests
+COPY lib /modules/nifi/lib
+COPY templates /modules/nifi/templates
+COPY metadata.json /modules/nifi/
+
+VOLUME /certs
+VOLUME /modules
+
+ENTRYPOINT ['/bin/true']

@@ -11,7 +11,5 @@ fixtures:
     java_ks:
       repo: "puppetlabs/java_ks"
       ref: "1.4.1"
-  repositories:
-    stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
   symlinks:
     nifi: "#{source_dir}"

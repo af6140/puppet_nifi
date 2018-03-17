@@ -6,8 +6,9 @@ HOSTS:
     platform: el-7-x86_64
     hypervisor: docker
     image:  c7-nifi-puppet:1.2
-    docker_container_name: nifi-as01a
+    docker_container_name: nifi-test
     docker_preserve_image: false
+    docker_image_entrypoint: '["/sbin/init"]'
 CONFIG:
   log_level: verbose
   type: foss

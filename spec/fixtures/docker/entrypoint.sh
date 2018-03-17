@@ -54,6 +54,6 @@ else
   echo "Cannot find nifi module at ${SRC_MODULE}/nifi"
 fi
 
-puppet apply --parser future --modulepath=${MODULES_DIR} /root/manifest.pp
+puppet apply --verbose --parser future --modulepath=${MODULES_DIR} /root/manifest.pp
 
 exec /usr/sbin/init

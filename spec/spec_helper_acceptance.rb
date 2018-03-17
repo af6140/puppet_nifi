@@ -58,8 +58,8 @@ RSpec.configure do |c|
         on host, 'echo "   IdentityFile ~/.ssh/id_rsa_git">> /root/.ssh/config'
         on host, "cat /root/.ssh/config"
       end
-
-      on host, 'rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm'
+      # installed in docker image
+      #on host, 'rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm'
 
       #use internal ca cert
       scp_to host, "#{proj_root}/spec/fixtures/ent_ca.crt", "/etc/pki/ca-trust/source/anchors"

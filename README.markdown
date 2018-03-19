@@ -15,6 +15,8 @@
 
 A puppet module to setup nifi, single node or cluster.
 
+This branch works against nifi 1.2.
+
 ## Module Description
 
 Module installs nifi from rpm package. Manage bootstrap configuration like jvm heap size, nifi properties like ldap authentication, ssl keystore and truststore, node identities etc.
@@ -30,11 +32,11 @@ Install as normal puppet modules.
 
 ### Setup Requirements **OPTIONAL**
 
-If your module requires anything extra before setting up (pluginsync enabled, etc.), mention it here. 
+If your module requires anything extra before setting up (pluginsync enabled, etc.), mention it here.
 
 ### Beginning with nifi
 
-The very basic steps needed for a user to get the module up and running. 
+The very basic steps needed for a user to get the module up and running.
 
 If your most recent release breaks compatibility or requires particular steps for upgrading, you may wish to include an additional section here: Upgrading (For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
 

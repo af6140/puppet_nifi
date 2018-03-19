@@ -87,23 +87,15 @@ class nifi (
   }
 
   #static configuration facts
-  file {$external_fact_dir:
-    ensure => 'directory',
-    owner => 'root',
-    group => 'root',
-    mode => '0644'
-  } ->
-  file {"${external_fact_dir}/facts.d":
-    ensure => 'directory',
-    owner => 'root',
-    group => 'root',
-    mode => '0644'
-  } ->
+
+  ensure_resource('file', [$external_fact_dir,"${external_fact_dir}/facts.d"], {'ensure' => 'directory', 'owner' => 'root', 'group' => 'root', 'mode'=> '0755'})
+
   file {"${external_fact_dir}/facts.d/nifi.txt":
     ensure => 'present',
     owner => 'root',
     group => 'root',
-    mode => '0644'
+    mode => '0644',
+    require => File["${external_fact_dir}/facts.d"]
   } ->
   nifi::extfact{'nifi_home':
     key => 'nifi_home',

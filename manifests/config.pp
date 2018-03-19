@@ -29,7 +29,7 @@ class nifi::config(
       'java.arg.8' => "-XX:CodeCacheMinimumFreeSpace=10m",
       'java.arg.9' => "-XX:+UseCodeCacheFlushing",
       'java.arg.13'=> '-XX:+UseG1GC',
-      'java.arg.11'=> "-javaagent:${::nifi::jolokia_agent_path}=config=/path/to/config.properties"
+      'java.arg.11'=> "-javaagent:${::nifi::jolokia_agent_path}=config=${::nifi::nifi_conf_dir}/jolokia_access.xml"
     }
   }else {
     $bootstrap_properties = {

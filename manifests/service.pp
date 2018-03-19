@@ -12,10 +12,12 @@ class nifi::service {
       hasrestart => true,
     }
   }else {
-    exec {"enable_${::nifi::service_name}":
-      path => '/bin:/sbin:/usr/bin:/usr/sbin',
-      command => "systemctl enable ${::nifi::service_name}",
-      unless => ["systemctl is-enabled ${::nifi::service_name}"]
+    if $::nifi::enable_service {
+      exec {"enable_${::nifi::service_name}":
+        path => '/bin:/sbin:/usr/bin:/usr/sbin',
+        command => "systemctl enable ${::nifi::service_name}",
+        unless => ["systemctl is-enabled ${::nifi::service_name}"]
+      }
     }
   }
 }

@@ -29,9 +29,17 @@ RUN rm -f /etc/yum.repos.d/puppetlabs* && \
 VOLUME /certs
 VOLUME /modules
 
+VOLUME /sys/fs/cgroup
+
+ENV container=docker
+
 WORKDIR /root
 
 COPY entrypoint.sh /entrypoint.sh
+
+# bootstrap with same flowfile, so the cluster nodes will see same
+COPY flow.xml /flow.xml
+
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -49,6 +49,7 @@ class nifi (
   String[1] $external_fact_dir = "/etc/facter",
   Boolean $start_service = false,
   Boolean $restart_service = false,
+  Boolean $enable_service = true,
 ) inherits ::nifi::params {
 
   package {'rubygem-rest-client':

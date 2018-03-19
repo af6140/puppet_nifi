@@ -28,8 +28,8 @@ cat << EOF > /root/manifest.pp
 ]
 class {'::nifi':
   config_cluster => true,
-  cluster_members => ['nifi-as01a.docker_nificluster','nifi-as02a.docker_nificluster','nifi-as03a.docker_nificluster'],
-  cluster_identities => ['nifi-as01a.docker_nificluster','nifi-as02a.docker_nificluster','nifi-as03a.docker_nificluster'],
+  cluster_members => ['nifi-as01a.nificluster','nifi-as02a.nificluster','nifi-as03a.nificluster'],
+  cluster_identities => ['nifi-as01a.nificluster','nifi-as02a.nificluster','nifi-as03a.nificluster'],
   cluster_zookeeper_ids => [1,2,3],
   id_mappings => \$id_mappings,
   config_ssl => true,
@@ -44,6 +44,7 @@ class {'::nifi':
   client_auth => true,
   min_heap => "512m",
   max_heap => "512m",
+  enable_service => true,
 }
 EOF
 
@@ -52,6 +53,12 @@ if [ -d ${SRC_MODULE}/nifi ]; then
   cp -r ${SRC_MODULE}/nifi ${MODULES_DIR}/nifi
 else
   echo "Cannot find nifi module at ${SRC_MODULE}/nifi"
+fi
+
+
+if [ -f /flow.xml ]; then
+  gzip -c /flow.xml  > /opt/nifi/flow/flow.xml.gz
+  chown nifi:nifi /opt/nifi/flow/flow.xml.gz
 fi
 
 puppet apply --verbose --parser future --modulepath=${MODULES_DIR} /root/manifest.pp

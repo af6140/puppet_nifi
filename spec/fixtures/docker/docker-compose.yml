@@ -1,39 +1,51 @@
-version: "3"
+version: "3.5"
 services:
   nifi-as01a:
-    hostname: nifi-as01a.docker_nificluster
+    hostname: nifi-as01a.nificluster
     container_name: nifi-as01a
     image: c7-nifi-puppet:1.2
     ports:
-      - "18081:8080/tcp"
+      - "18443:8443/tcp"
     networks:
       - nificluster
     volumes:
       - ./ssl:/certs/:ro
       - ../../..:/modules/nifi:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    cap_add:
+      - ALL
   nifi-as02a:
-    hostname: nifi-as02a.docker_nificluster
+    hostname: nifi-as02a.nificluster
     container_name: nifi-as02a
     image: c7-nifi-puppet:1.2
     ports:
-      - "18082:8080/tcp"
+      - "18444:8443/tcp"
     networks:
       - nificluster
     volumes:
       - ./ssl:/certs/:ro
       - ../../..:/modules/nifi:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    cap_add:
+      - ALL
   nifi-as03a:
-    hostname: nifi-as03a.docker_nificluster
+    hostname: nifi-as03a.nificluster
     container_name: nifi-as03a
     image: c7-nifi-puppet:1.2
     ports:
-      - "18083:8080/tcp"
+      - "18445:8443/tcp"
     networks:
       - nificluster
     volumes:
       - ./ssl:/certs/:ro
       - ../../..:/modules/nifi:ro
-
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    cap_add:
+      - ALL
 networks:
   nificluster:
+    name: nificluster
 

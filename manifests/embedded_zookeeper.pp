@@ -17,6 +17,7 @@ define nifi::embedded_zookeeper (
     mode   => '0755'
   }
 
+  notify {"cluster members: ${members}": }
   if !empty($members) {
     $members_array = $members.map |$index, $member| {
       $real_index = $ids[$index]

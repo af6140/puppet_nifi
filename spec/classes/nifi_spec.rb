@@ -237,6 +237,64 @@ describe 'nifi' do
 
       end
 
+      context "on #{os} with cluster config, implicit ssl config, and systemd customization" do
+        let(:facts) do
+          facts[:concat_basedir] = '/tmp'
+          facts
+        end
+
+        let(:params) {
+          {
+            :config_ssl  => true,
+            :config_cluster => true,
+            :cacert_path => '/etc/pki/certs/ca.pem',
+            :node_cert_path => '/etc/pki/certs/node.pem',
+            :node_private_key_path => '/etc/pki/keys/node_key.pem',
+            :initial_admin_identity => 'nifi-admin',
+            :initial_admin_cert_path => '/etc/pki/certs/nifi_admin.pem',
+            :initial_admin_key_path => '/etc/pki/keys/nifi_amdin.key',
+            :keystore_password => 'changeit',
+            :key_password => 'secret',
+            :client_auth => true,
+            :cluster_members => cluster_members,
+            :cluster_identities => cluster_identities,
+            :systemd_overrides => {
+              'LimitNOFILE' => '8096'
+            }
+
+          }
+        }
+
+
+        context "nifi class works" do
+          it { is_expected.to compile.with_all_deps }
+
+          it { is_expected.to contain_class('nifi::params') }
+          it { is_expected.to contain_class('nifi::install').that_comes_before('nifi::config') }
+          it { is_expected.to contain_class('nifi::config') }
+          it { is_expected.to contain_package('nifi') }
+
+
+          it { is_expected.to contain_nifi__embedded_zookeeper('nifi_zookeeper_config') }
+
+          it { is_expected.to contain_file('/opt/nifi/state/zookeeper/myid') }
+
+          it { is_expected.to contain_nifi__cluster_state_provider('cluster_state_provider') }
+
+          it { is_expected.to contain_concat__fragment('frag_authorizer_file-provider')
+                                .with_content(/<property name="Node Identity 1">nifi-as01a\.dev<\/property>/)
+          }
+
+
+          it { is_expected.to contain_file('/etc/systemd/system/nifi.service.d/nifi.conf')
+            .with_content(/LimitNOFILE=8096$/)
+            .with_content(/LimitNOFILE=$/)
+          }
+
+        end
+
+      end
+
     end
   end
 

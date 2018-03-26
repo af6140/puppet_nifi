@@ -300,4 +300,16 @@ class nifi::config(
   nifi::custom_properties{'nifi_custom_properties':
 
   }
+
+  if $::nifi::systemd_overrides and ! empty($::nifi::systemd_overrides) {
+    $systemd_overrides = $::nifi::systemd_overrides
+    file { '/etc/systemd/system/nifi.service.d/nifi.conf':
+      ensure => 'present',
+      content => template('nifi/service/service_override.erb'),
+    }
+  }else {
+    file { "/etc/systemd/system/nifi.service.d/nifi.conf":
+      ensure => 'absent',
+    }
+  }
 }

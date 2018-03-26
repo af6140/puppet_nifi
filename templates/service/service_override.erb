@@ -1,0 +1,5 @@
+[Service]
+<% @systemd_overrides.map do |key, value| -%>
+<%= key %>=
+<%= key %>=<%= value %>
+<% end -%>

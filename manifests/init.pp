@@ -50,6 +50,7 @@ class nifi (
   Boolean $start_service = false,
   Boolean $restart_service = false,
   Boolean $enable_service = true,
+  Optional[Hash] $systemd_overrides = undef,
 ) inherits ::nifi::params {
 
   package {'rubygem-rest-client':

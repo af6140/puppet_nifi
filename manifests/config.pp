@@ -303,12 +303,18 @@ class nifi::config(
 
   if $::nifi::systemd_overrides and ! empty($::nifi::systemd_overrides) {
     $systemd_overrides = $::nifi::systemd_overrides
+    file { '/etc/systemd/system/nifi.service.d':
+      ensure => 'directory',
+    } ->
     file { '/etc/systemd/system/nifi.service.d/nifi.conf':
       ensure => 'present',
       content => template('nifi/service/service_override.erb'),
     }
   }else {
     file { "/etc/systemd/system/nifi.service.d/nifi.conf":
+      ensure => 'absent',
+    } ->
+    file { '/etc/systemd/system/nifi.service.d':
       ensure => 'absent',
     }
   }

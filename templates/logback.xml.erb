@@ -186,8 +186,9 @@
     <logger name="org.apache.nifi.StdErr" level="ERROR" additivity="false">
         <appender-ref ref="BOOTSTRAP_FILE" />
     </logger>
-
+    <!-- https://stackoverflow.com/questions/40616214/log-info-in-executescript -->
     <logger name="org.apache.nifi.processors.script.InvokeScriptedProcessor" level="INFO"/>
+    <logger name="org.apache.nifi.processors.script.ExecuteScript" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="APP_FILE"/>

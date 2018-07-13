@@ -47,7 +47,7 @@ class nifi::params {
     'nifi.administrative.yield.duration' => '30 sec',
     'nifi.flowservice.writedelay.interval' => '500 ms',
     'nifi.cluster.node.connection.timeout'=> '30 sec',
-    'nifi.cluster.node.read.timeout'='30 sec'
+    'nifi.cluster.node.read.timeout' => '30 sec'
   }
   $flow_election_max_candidates = 2
 
